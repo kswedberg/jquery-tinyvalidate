@@ -48,7 +48,8 @@ $.fn.tinyvalidate = function(options) {
 
     var opts = $.extend(true, {}, $.fn.tinyvalidate.defaults, options || {}, $.metadata ? $form.metadata() : $.meta ? $form.data() : {});
     var inline = opts.inline,
-        summary = opts.summary;
+        summary = opts.summary,
+        foo;
 
     function validate(evt) {
       errMsg = '';
