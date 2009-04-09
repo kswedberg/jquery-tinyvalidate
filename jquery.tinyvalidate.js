@@ -8,7 +8,8 @@
 
 $.tinyvalidate = {
   version: '1.1',
-  //safeguards in case plugin user chooses wrong insertion type
+  
+  // safeguards for inline insertion in case plugin user chooses wrong insertion type
   elementType: function(tag) {
     if (/(input|textarea|select)/i.test(tag)) {
       return 'inputs';
@@ -73,7 +74,7 @@ $.fn.tinyvalidate = function(options) {
     
     var $form = $(this);
     var opts = $.extend(true, {}, $.fn.tinyvalidate.defaults, options || {}, $.metadata ? $form.metadata() : $.meta ? $form.data() : {});
-    var errMsg = '',
+    var lineItems = [],
       errCount = 0;  
 
     // set up inline options
@@ -84,11 +85,13 @@ $.fn.tinyvalidate = function(options) {
     }
     //set up summary options
     var summary = opts.summary,
-    $errorSummary = $(summary.wrapper).addClass(summary.summaryClass);
+        $errorSummary = $(summary.wrapper).addClass(summary.wrapperClass),
+        detailArray = summary.detailElement.match(/[^>]+>/g),
+        lineItemDivider = detailArray[1] + detailArray[0];
     $(summary.insertTo == 'form' ? $form[0] : summary.inserTo)[summary.insertType]($errorSummary);
 
     function validate(evt) {
-      errMsg = '';
+      lineItems = [];
       errCount = 0;
       // loop through each rule
       $.each(rules, function(rulename, val) {
@@ -117,17 +120,16 @@ $.fn.tinyvalidate = function(options) {
             if (inline) {
               var elType = $.tinyvalidate.elementType(this.nodeName);
               var postype = $.tinyvalidate[elType][inline.insertType];
-              if (window.console && console.log) { console.log(postype);} 
 
               $(inline.noticeElement).html(val.text).addClass(inline.noticeClass)[postype]($field);
-              // $field[postype]('<' + opts.noticeElement + ' class="' + opts.noticeClass + '">' + val.text + '</' + opts.noticeElement + '>');
               $inlineContainer.addClass(inline.containerErrorClass);                
             } 
-            return false;
+
 
             if (summary.detailElement) {
-              // var detailText = $field.is('fieldset') ? $field.children(':first').text() : $field.prev().text().replace(/\*$/,'');
-              // errMsg += '<' + opts.noticeElement + ' class="' + opts.noticeClass + '">' + detailText + ' ' + val.text + '</' + opts.noticeElement + '>';            
+              var detailText = $field.is('fieldset') ? $field.children(':first').text() : $field.prev().text().replace(/(\*|:)$/,'');
+              lineItems.push(detailText + ' ' + val.text);
+              // '<' + opts.noticeElement + ' class="' + opts.noticeClass + '">' + detailText + ' ' + val.text + '</' + opts.noticeElement + '>';            
             }
           }       
         });
@@ -136,7 +138,7 @@ $.fn.tinyvalidate = function(options) {
     var bindSubmit = function(evt) {
       $form.bind('submit.tv', function() {
         validate('submit');
-        if (inline.noticeAnimate.effect) {
+        if (inline && inline.noticeAnimate.effect) {
           $(inline.noticeSelector).hide()[inline.noticeAnimate.effect](inline.noticeAnimate.speed);
         }
         displayMessage();
@@ -164,7 +166,7 @@ $.fn.tinyvalidate = function(options) {
     function displayMessage() {
       $errorSummary.hide();
       if (errCount) {
-        $errorSummary.html(summary.preNotice + errMsg + summary.postNotice).show();
+        $errorSummary.html(summary.preNotice +  detailArray[0] + lineItems.join(lineItemDivider) + detailArray[1] + summary.postNotice).show();
       }
     }
     
@@ -197,11 +199,11 @@ $.fn.tinyvalidate.defaults.inline = {
 $.fn.tinyvalidate.defaults.summary = {
   insertTo: 'form',
   insertType: 'append',
-  wrapper: '<div></div>',
-  summaryClass: 'error',
-  preNotice: 'There was an error processing your request. <br>Please correct the above highlighted fields and try again.',
-  postNotice: '',
-  detailElement: null //'<div></div>'
+  wrapper: '<div id="submiterror"></div>',
+  wrapperClass: 'error',
+  preNotice: 'There was an error processing your request. <br>Please correct the above highlighted fields and try again.<ul>',
+  postNotice: '</ul>',
+  detailElement: '<li></li>'
 };
 
 
