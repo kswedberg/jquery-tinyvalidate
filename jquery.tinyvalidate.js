@@ -1,13 +1,13 @@
 
-
 /***************************************
-   =TinyValidate: A Simple jQuery Validation Plugin
+   =TinyValidate: A (Relatively) Tiny jQuery Validation Plugin
 ************************************** */
+// TODO: if a field is validating on more than one class, and it's a required field with no value, ignore the other one(s).
 
 ;(function($) { 
 
 $.tinyvalidate = {
-  version: '1.1',
+  version: '1.2',
   
   // safeguards for inline insertion in case plugin user chooses wrong insertion type
   elementType: function(tag) {
@@ -36,12 +36,15 @@ $.tinyvalidate = {
     insertAfter: 'appendTo',
     before: 'insertBefore',
     insertBefore: 'insertBefore'
-  }
-
+  },
+  summaries: [],
+  callCounter: -1
 };
 
 $.fn.tinyvalidate = function(options) {
-  var errCount = 0, timer, currentFieldset = null; 
+  var errorCount = 0;
+  $.tinyvalidate.callCounter++;
+  var idSuffix = $.tinyvalidate.callCounter ? '_' + $.tinyvalidate.callCounter : '';
 
   var corerules = {
     required:     {
@@ -70,104 +73,169 @@ $.fn.tinyvalidate = function(options) {
   };
   var rules = $.extend(true, {},corerules, $.tinyvalidate.morerules || {});
 
-  return this.each(function() {
+  return this.each(function(index) {
+    var $form = $(this),
+        $allFields = $([]);
+    idSuffix += (index ? '-' + index : '');
     
-    var $form = $(this);
+    // merge defaults, per-call options, and per-selector options
     var opts = $.extend(true, {}, $.fn.tinyvalidate.defaults, options || {}, $.metadata ? $form.metadata() : $.meta ? $form.data() : {});
     var lineItems = [],
-      errCount = 0;  
+        errorCount = 0,
+        inline = opts.inline;
 
-    // set up inline options
-    var inline = opts.inline;
-    if (inline) {
-      inline.noticeTag = inline.noticeElement.match(/\w+\b/).join('');
-      inline.noticeSelector = inline.noticeTag + '.' + inline.noticeClass;
-    }
-    //set up summary options
-    var summary = opts.summary,
-        $errorSummary = $(summary.wrapper).addClass(summary.wrapperClass),
-        detailArray = summary.detailElement.match(/[^>]+>/g),
-        lineItemDivider = detailArray[1] + detailArray[0];
-    $(summary.insertTo == 'form' ? $form[0] : summary.inserTo)[summary.insertType]($errorSummary);
-
-    function validate(evt) {
-      lineItems = [];
-      errCount = 0;
-      // loop through each rule
-      $.each(rules, function(rulename, val) {
-
-        // bind/loop elements with class that matches rule's class
-        $('.' + val.ruleClass, $form)[evt != 'submit' ? evt : 'each'](function() {
-          var $field = $(this);
-          
-          // if a field is both required and validated against another rule, 
-          // ...don't process other rule if empty 
-          if (rulename !== 'required' && $field.hasClass('required') && $field.val() == '') {
-            return;
-          }
-
-          if (inline) {
-            var $inlineContainer = (/(radio|checkbox)/).test(rulename) ? $field : $field.parents(inline.containerTag + ':first');
-            // start with clean slate
-            $inlineContainer.removeClass(inline.containerErrorClass).find(inline.noticeSelector).remove();
-          }
-          
-          // validation test
-          var arg = val.check == 'element' ? $field : $field.val();
-          if (!val.rule(arg) && !$field.is(':hidden')) {
-            errCount++;
-
-            if (inline) {
-              var elType = $.tinyvalidate.elementType(this.nodeName);
-              var postype = $.tinyvalidate[elType][inline.insertType];
-
-              $(inline.noticeElement).html(val.text).addClass(inline.noticeClass)[postype]($field);
-              $inlineContainer.addClass(inline.containerErrorClass);                
-            } 
-
-
-            if (summary.detailElement) {
-              var detailText = $field.is('fieldset') ? $field.children(':first').text() : $field.prev().text().replace(/(\*|:)$/,'');
-              lineItems.push(detailText + ' ' + val.text);
-              // '<' + opts.noticeElement + ' class="' + opts.noticeClass + '">' + detailText + ' ' + val.text + '</' + opts.noticeElement + '>';            
-            }
-          }       
+    // special case: $('someform').tinyvalidate('removeErrors')
+    // immediately removes all error class and notices from the form
+    if (options == 'removeErrors') {
+      $.each(rules, function(ruleName, ruleInfo) {
+        $('.' + ruleInfo.ruleClass, $form).each(function() {
+          $allFields = $allFields.add($(this));
         });
       });
+      $allFields
+      .removeData('error')
+      .trigger('removeNotice')
+      .trigger('toggleErrorClass');
+      $form.trigger('hideSummary');
+      return this;      
     }
-    var bindSubmit = function(evt) {
-      $form.bind('submit.tv', function() {
-        validate('submit');
-        if (inline && inline.noticeAnimate.effect) {
-          $(inline.noticeSelector).hide()[inline.noticeAnimate.effect](inline.noticeAnimate.speed);
-        }
-        displayMessage();
-        if (errCount) {
-          return false;
-        } else if (opts.submitOverride) {
-          opts.submitOverride();
-          return false;
+
+    // set up inline options
+    if (inline) {
+      inline.noticeTag = inline.noticeElement.match(/\w+\b/).join('');
+      inline.noticeSelector = inline.noticeTag + '.' + inline.noticeClass;      
+    }
+    
+    //set up summary options
+    if (opts.summary) {
+      var summary = opts.summary,
+          $errorSummary = $(summary.wrapper).addClass(summary.wrapperClass).hide(),
+          detailArray = summary.detailElement.match(/[^>]+>/g),
+          lineItemDivider = detailArray[1] + detailArray[0];
+      $(summary.insertTo == 'form' ? $form[0] : summary.inserTo)[summary.insertType]($errorSummary);
+      $errorSummary.attr('id', function() {
+        return this.id + idSuffix;
+      });
+
+    }
+
+    
+    // initialize: loop through elements with class that matches each rule's class
+    $.each(rules, function(ruleName, ruleInfo) {
+      $('.' + ruleInfo.ruleClass, $form).each(function() {
+        var $field = $(this);
+        var thisRule = $field.data('rule') || [];
+        thisRule.push(rules[ruleName]);
+        var elType = $.tinyvalidate.elementType(this.nodeName) || 'inputs';
+        $field
+        .data('rule', thisRule)
+        .data('ruleName', ruleName)
+        .data('elementType', elType);
+        $allFields = $allFields.add($field);
+        if (inline) {
+          $field.data('insertion', $.tinyvalidate[elType][inline.insertType]);
         }
       });
-      
-    };
-    
-    if (opts.primaryEvent == 'submit') {
-      bindSubmit();
-    } else {
-      validate(opts.primaryEvent);
+    });
+
+    if (inline) {
+      $allFields
+      .bind('addNotice', function(event, num) {
+          var $thisField = $(this),
+              ruleText = $thisField.data('rule')[num].text;
+          var $thisNotice = $(inline.noticeElement);
+          $thisNotice.html(ruleText);
+          $thisNotice.addClass(inline.noticeClass)
+          [$(this).data('insertion')](this).hide()
+          [inline.noticeAnimate.effect](inline.noticeAnimate.speed);
+          
+          $thisField.bind('removeNotice', function() {
+            $thisNotice.remove();          
+          });
+      });
+
+      $allFields
+      .bind('toggleErrorClass', function(event) {
+        var $thisField = $(this);
+
+        var $thisContainer = (/(radio|checkbox)/).test($thisField.data('ruleName')) ? $thisField : $thisField.parents(inline.containerTag + ':first');
+        if (!!$thisField.data('error')) {
+          $thisContainer.addClass(inline.containerErrorClass);
+        } else {
+          $thisContainer.removeClass(inline.containerErrorClass);
+        }
+      });
     }
-    if (opts.secondaryEvent && opts.secondaryEvent == 'submit') {
-      bindSubmit(opts.secondaryEvent);
-    } else if (opts.secondaryEvent) {
-      validate(opts.secondaryEvent);
+    if (summary) {
+      $form.bind('displaySummary', function(event, errors) {
+        $errorSummary.hide();
+        if (errors) {
+          var preNotice = summary.preNotice.replace(/\{num\}/g, errors).replace(/\{([^\|]+)\|([^}]+)\}/, function(str, singular, plural) {
+            return (errors*1 == 1) ? singular : plural;
+          });
+          var fullSummary = summary.detailElement
+              ? preNotice +  detailArray[0] + lineItems.join(lineItemDivider) + detailArray[1] + summary.postNotice
+              : preNotice + summary.postNotice;
+          $errorSummary.html(fullSummary)
+          [summary.noticeAnimate.effect](summary.noticeAnimate.speed);
+        }
+      });
+      $form.bind('hideSummary', function() {
+        $errorSummary.hide();
+      });
     }
-     
-    function displayMessage() {
-      $errorSummary.hide();
-      if (errCount) {
-        $errorSummary.html(summary.preNotice +  detailArray[0] + lineItems.join(lineItemDivider) + detailArray[1] + summary.postNotice).show();
+    $allFields.bind('validate', function(event) {
+      var thisField = this,
+          $thisField = $(this).trigger('removeNotice');
+      var thisRule = $thisField.data('rule'), trl = thisRule.length;
+      for (var i=0; i < trl; i++) {
+        var arg = thisRule[i].check == 'element' ? $thisField : $thisField.val();
+        if (!thisRule[i].rule(arg) && !$thisField.is(':hidden')) {
+          $thisField
+          .data('error', 'true')
+          .trigger('addNotice', [i]);
+          if (summary && summary.detailElement) {
+            var detailText = $thisField.data('elementType') == 'containers'
+                ? $thisField.children(':first').text()
+                : $thisField.prev().text().replace(/(\*|:)$/,'');
+            if (summary.linkify) {
+              detailText = '<a href="#' + ($thisField.data('elementType') == 'containers' ? $thisField.find('input')[0].id : thisField.id) + '">' + detailText + '</a>';
+            }
+            lineItems.push(detailText + ' ' + thisRule[i].text);
+          }
+          errorCount++;
+        } else {
+          $thisField
+          .removeData('error');
+        }
       }
+      $thisField.trigger('toggleErrorClass');
+    });
+
+    // bind to user interactions
+    
+    $form.submit(function() {
+      errorCount = 0;
+      lineItems = [];
+      $allFields.trigger('validate');
+      $form.trigger('displaySummary', [errorCount]);
+      if (errorCount) {
+        return false;        
+      } else if (opts.submitOverride) {
+        $form.tinyvalidate('removeErrors');
+        opts.submitOverride();
+        return false;
+      }
+
+    });
+    
+    if (typeof opts.otherEvents == 'string') {
+      var evts = opts.otherEvents.replace(/,\s+/g,',').split(',');
+    }
+    for (var i = evts.length - 1; i >= 0; i--){
+      $allFields.bind(evts[i], function() {
+        $(this).trigger('validate');
+      });
     }
     
   }); //end return this.each
@@ -177,8 +245,7 @@ $.fn.tinyvalidate = function(options) {
 // plugin defaults
 
 $.fn.tinyvalidate.defaults = {
-  primaryEvent: 'blur',
-  secondaryEvent: 'submit',
+  otherEvents: 'blur',
   submitOverride: null  // if you want to override submit handling when no validation errors, use an anonymous function:
                         // function() { /* do something */ }
 };
@@ -201,9 +268,14 @@ $.fn.tinyvalidate.defaults.summary = {
   insertType: 'append',
   wrapper: '<div id="submiterror"></div>',
   wrapperClass: 'error',
-  preNotice: 'There was an error processing your request. <br>Please correct the above highlighted fields and try again.<ul>',
+  preNotice: 'There was a problem processing your request. <br>Please correct the {num} highlighted {field|fields} and try again.<ul>',
   postNotice: '</ul>',
-  detailElement: '<li></li>'
+  noticeAnimate: {
+    effect: 'fadeIn',
+    speed: 400
+  },
+  detailElement: '<li></li>',
+  linkify: true // set to null if you don't want to include details in the summary message
 };
 
 
@@ -270,8 +342,6 @@ $.tinyvalidate.morerules = {
                   text: '&laquo; phone number is incorrectly formatted ',
                   check: 'value'
                 }
-  
 };
- 
 
 })(jQuery);

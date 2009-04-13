@@ -1,0 +1,124 @@
+
+
+/***************************************
+   =Defaults
+************************************** */
+body{
+	font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	line-height: 1.3em;
+}
+
+a           { color: #009; text-decoration: underline; }
+a:hover     { color: #000; text-decoration: underline; }
+
+
+
+
+/***************************************
+   =Structure
+************************************** */
+html, body {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.container {
+  width: 960px;
+  margin: 0 auto;;
+}
+
+/***************************************
+   =forms
+************************************** */
+form {
+	margin: 0 0 1.5em;
+	padding-bottom: .5em;
+	border-bottom: 1px solid #444;
+}
+fieldset {
+	border: 1px solid #ccc;
+	margin: 1.5em 0;
+	padding: 1.5em;
+	position: relative;
+}
+legend span {
+	display: block;
+	position: absolute;
+	top: -20px;
+	left: 100px;
+}
+
+
+/* inputs */
+textarea,
+form div.text input {
+	background: #fff;
+	border:1px solid #999;
+	padding: 2px;
+}
+form div.text label,
+form div.textarea label,
+form div.select label,
+form div.file label {
+	display: block;
+}
+form div.text,
+form div.textarea,
+form div.select,
+form div.file {
+	margin: 0 0 .75em;
+}
+textarea:focus,
+form div.text input:focus	{
+	border-color: #333;
+}
+
+/* radio and checkboxes */
+form div.radio label,
+form div.checkbox label {
+	display: inline; 
+} 
+form div.radio,
+form div.checkbox {
+	margin: 0;
+}
+form div.radio label,
+form div.checkbox label {
+	cursor: pointer;
+}
+
+.error,
+.notice,
+.success    { padding: .8em; margin-bottom: 1em; border: 2px solid #ddd; }
+
+.error      { background-color: #FBE3E4; color: #8a1f11; border-color: #FBC2C4; }
+.notice     { background-color: #FFF6BF; color: #514721; border-color: #FFD324; }
+.success    { background-color: #E6EFC2; color: #264409; border-color: #C6D880; }
+.error a    { color: #8a1f11; }
+.notice a   { color: #514721; }
+.success a  { color: #264409; }
+
+.error .notice {padding: 0 .8em; background-color: inherit; color: inherit; border: 0;}
+
+.hide				{ display: none; }
+.access			{ position: absolute; left: -1000em; top: -1000em; }
+.replace    { letter-spacing: -1em; text-indent: -1000em; display: block; font-size: 1px;}
+
+
+/***************************************
+   =Extras
+************************************** */
+.alt {
+  background-color: #e3e3e3;
+  color: #000;
+}
+.selected {
+  background-color: #4556ee;
+  color: #fff;
+}
+.active {
+  background-color: #cdcfee;
+  color: #000;
+}
