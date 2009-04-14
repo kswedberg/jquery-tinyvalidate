@@ -90,18 +90,20 @@ form div.checkbox label {
 }
 
 .error,
+.error-summary,
 .notice,
 .success    { padding: .8em; margin-bottom: 1em; border: 2px solid #ddd; }
 
+.error-summary,
 .error      { background-color: #FBE3E4; color: #8a1f11; border-color: #FBC2C4; }
 .notice     { background-color: #FFF6BF; color: #514721; border-color: #FFD324; }
 .success    { background-color: #E6EFC2; color: #264409; border-color: #C6D880; }
+.error-summary a,
 .error a    { color: #8a1f11; }
 .notice a   { color: #514721; }
 .success a  { color: #264409; }
 
-.error .notice {padding: 0 .8em; background-color: inherit; color: inherit; border: 0;}
-
+.error-summary span.error-message { color: #333;}
 .hide				{ display: none; }
 .access			{ position: absolute; left: -1000em; top: -1000em; }
 .replace    { letter-spacing: -1em; text-indent: -1000em; display: block; font-size: 1px;}
