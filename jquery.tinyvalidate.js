@@ -1,8 +1,15 @@
-
-/***************************************
-   =TinyValidate: A (Relatively) Tiny jQuery Validation Plugin
-************************************** */
-// TODO: if a field is validating on more than one class, and it's a required field with no value, ignore the other one(s).
+/*
+ * jQuery TinyValidate plugin
+ * A (Relatively) Tiny jQuery Validation Plugin
+ * Version 1.2  (04/13/2009)
+ * @requires jQuery v1.3
+ * @author Karl Swedberg
+ *
+ * Dual licensed under the MIT and GPL licenses:
+ * http://www.opensource.org/licenses/mit-license.php
+ * http://www.gnu.org/licenses/gpl.html
+ *
+ */
 
 ;(function($) { 
 
@@ -191,6 +198,7 @@ $.fn.tinyvalidate = function(options) {
       for (var i=0; i < trl; i++) {
         var arg = thisRule[i].check == 'element' ? $thisField : $thisField.val();
         if (!thisRule[i].rule(arg) && !$thisField.is(':hidden')) {
+          if ($thisField.is('.required') && thisRule[i].ruleClass != 'required') {continue;}
           $thisField
           .data('error', 'true')
           .trigger('addNotice', [i]);
