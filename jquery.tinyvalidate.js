@@ -16,7 +16,8 @@
 $.tinyvalidate = {
   version: '1.2',
   callCounter: -1,
-  maxnum: 0
+  maxnum: 0,
+  rules: {}
 };
 
 $.fn.tinyvalidate = function(options) {
@@ -24,33 +25,10 @@ $.fn.tinyvalidate = function(options) {
   $.tinyvalidate.callCounter++;
   var idSuffix = $.tinyvalidate.callCounter ? '_' + $.tinyvalidate.callCounter : '';
 
-  var corerules = {
-    required:     {
-                    ruleClass: 'required',
-                    rule: function(r) {
-                      return (/\S+/).test(r);
-                    },
-                    text: '&laquo; required field has no value'
-                  },
-    email:        {
-                    ruleClass: 'email',
-                    rule: function(r) {
-                      return (/^\S+[@]\w+(\.[a-zA-Z0-9]{2,4}){1,4}/).test(r);
-                    },
-                    text: '&laquo; incorrect E-mail format',
-                    check: 'value'
-                  },
-    zip:          {
-                    ruleClass: 'zip',
-                    rule: function(r) {
-                     return (/^\d{5}(-\d{4})?$/).test(r);
-                    },
-                    text: '&laquo; incorrect ZIP code',
-                    check: 'value'
-                  }
-  };
-  
-  var rules = $.extend(true, {},corerules, $.tinyvalidate.morerules || {});
+  var rules = $.tinyvalidate.rules;
+  if (isEmpty(rules)) {
+    return log('you must have at least one rule. see jquery.tinyvalidate.rules.js', 'alert');
+  }
 
   return this.each(function(index) {
     var $form = $(this),
@@ -197,7 +175,7 @@ $.fn.tinyvalidate = function(options) {
 
     // bind to user interactions
     
-    $form.submit(function() {
+    $form.bind('submit.tv', function() {
       errorCount = 0;
       summaryItems = [];
       $allFields.trigger('validate');
@@ -206,7 +184,7 @@ $.fn.tinyvalidate = function(options) {
         return false;        
       } else if (opts.submitOverride) {
         $form.tinyvalidate('removeErrors');
-        opts.submitOverride();
+        opts.submitOverride(opts);
         return false;
       }
 
@@ -216,12 +194,18 @@ $.fn.tinyvalidate = function(options) {
       var evts = opts.otherEvents.replace(/,\s+/g,',').split(',');
     }
     for (var i = evts.length - 1; i >= 0; i--){
-      $allFields.bind(evts[i], function() {
+      $allFields.bind(evts[i] + '.tv', function() {
         $(this).trigger('validate');
       });
     }
     
+    $.tinyvalidate.addErrorClass = function(input) {
+      $(input).parents(inline.containerTag + ':first').addClass(inline.containerErrorClass);
+    };
+    
   }); //end return this.each
+  
+    
 }; // end $.fn.tinyvalidate
 
 /** ===plugin defaults
@@ -262,6 +246,7 @@ $.fn.tinyvalidate.defaults.summary = {
   }
 };
 
+
 /** PRIVATE safeguards for inline insertion 
     in case plugin user chooses wrong insertion type
     feel free to ignore this part.
@@ -298,4 +283,20 @@ function setElementType(tag) {
 function splitTag(element) {
   return element.match(/[^>]+>/g);
 }
+function isEmpty(obj) {
+  for(var prop in obj) {
+    if(obj.hasOwnProperty(prop))
+    return false;
+  }
+  return true;
+}
+function log(obj) {
+  if (window.console && window.console.log) {
+    window.console.log(obj);
+  } else 
+  if (arguments[1] == 'alert') {
+    alert(obj);
+  }
+}
+
 })(jQuery);

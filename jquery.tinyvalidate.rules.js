@@ -1,11 +1,33 @@
 /*
- * More (optional) Validation Rules TinyValidate
+ * Validation Rules for TinyValidate Plugin
  * 
 */
 
-$.tinyvalidate.morerules = {};
+$.tinyvalidate.rules.required = {
+  ruleClass: 'required',
+  rule: function(r) {
+    return (/\S+/).test(r);
+  },
+  text: 'required field has no value'
+};
+$.tinyvalidate.rules.email = {
+  ruleClass: 'email',
+  rule: function(r) {
+    return (/^\S+[@]\w+(\.[a-zA-Z0-9]{2,4}){1,4}/).test(r);
+  },
+  text: 'incorrect E-mail format',
+  check: 'value'
+};
+$.tinyvalidate.rules.zip = {
+  ruleClass: 'zip',
+  rule: function(r) {
+    return (/^\d{5}(-\d{4})?$/).test(r);
+  },
+  text: 'incorrect ZIP code',
+  check: 'value'
+};
 
-$.tinyvalidate.morerules.date = {
+$.tinyvalidate.rules.date = {
   ruleClass: 'date',
   rule: function(r) {
     // var thisYear = new Date().getFullYear();
@@ -16,7 +38,7 @@ $.tinyvalidate.morerules.date = {
   check: 'value'
 };
 
-$.tinyvalidate.morerules.phone = {
+$.tinyvalidate.rules.phone = {
   ruleClass: 'phone',
   rule: function(r) {
     return (/\(?\d{3}\)?[\. -]?\d{3}[\. -]?\d{4}/).test(r) || r == '';
@@ -26,7 +48,7 @@ $.tinyvalidate.morerules.phone = {
 };
 
 
-$.tinyvalidate.morerules.ssn = {
+$.tinyvalidate.rules.ssn = {
   ruleClass: 'ssn',
   rule: function(r) {
     return (/\d{3}-\d{2}-\d{4}/).test(r);
@@ -35,7 +57,7 @@ $.tinyvalidate.morerules.ssn = {
   check: 'value'
 };
 
-$.tinyvalidate.morerules.currency = {
+$.tinyvalidate.rules.currency = {
   ruleClass: 'currency',
   rule: function(r) {
     return (/^\d+(\.\d\d)?$/).test(r) || r == ''; 
@@ -44,7 +66,7 @@ $.tinyvalidate.morerules.currency = {
   check: 'value'
 };
 
-$.tinyvalidate.morerules.requiredradio = {
+$.tinyvalidate.rules.requiredradio = {
   ruleClass: 'choose-one',
   rule: function(el) {
     if (el.constructor == Object) {
@@ -55,7 +77,7 @@ $.tinyvalidate.morerules.requiredradio = {
   check: 'element'
 };
 
-$.tinyvalidate.morerules.maxradio = {
+$.tinyvalidate.rules.maxradio = {
   ruleClass: 'max',
   rule: function(el) {
     // this rule requires 2 classes, "max" and "max-n", where n represents the max number

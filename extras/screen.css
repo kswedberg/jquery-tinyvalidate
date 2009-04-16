@@ -1,3 +1,10 @@
+/** NOTE: 
+ ** A lot of the style rules in here aren't needed 
+ ** at all for the TinyValidate plugin. 
+ ** I just pulled the stylesheet from another one of my sites for the demo.
+ ** I'll clean it up later. 
+************************************************************
+************************************************************/
 
 
 /***************************************
@@ -103,6 +110,7 @@ form div.checkbox label {
 .notice a   { color: #514721; }
 .success a  { color: #264409; }
 
+.error-message {padding-left: .8em;}
 .error-summary span.error-message { color: #333;}
 .hide				{ display: none; }
 .access			{ position: absolute; left: -1000em; top: -1000em; }
