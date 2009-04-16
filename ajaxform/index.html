@@ -31,10 +31,10 @@
 
     var $contactForm =  $('form.comment');
     
-    
     $contactForm.tinyvalidate({
       submitOverride: function(opts) {
         $wrapper = $(opts.summary.wrapper).addClass('submitOverride');
+        
         $contactForm.ajaxSubmit({
           data: $(this).serialize(),
           dataType: 'json',
@@ -48,10 +48,11 @@
                 msg += '<li>' + i + ': ' + responseText.errors[i] + '</li>';
                 errorNames.push('[name=' + i + ']');
               }
-              $contactForm.find(errorNames.join(',')).data('error', 'true').trigger('toggleErrorClass');
               msg += '</ul>';
               
               $wrapper.html(msg).appendTo($contactForm);
+              $contactForm.find(errorNames.join(',')).data('error', 'true').trigger('toggleErrorClass');
+              
             } else {
               $contactForm.slideUp(200, function() {
                 $wrapper
@@ -88,7 +89,7 @@
       </div>
       <div class="text">
         <label for="email">Email *</label>
-        <input class="required email" type="text" name="email" value="" id="email" />
+        <input class="required email" type="text" name="email" value="" id="email" /> (type "joe@example.com" to see server-side validation.)
       </div>
       <div class="textarea">
         <label for="comment">Comment</label>
