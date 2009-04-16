@@ -194,7 +194,8 @@ $.fn.tinyvalidate = function(options) {
       var evts = opts.otherEvents.replace(/,\s+/g,',').split(',');
     }
     for (var i = evts.length - 1; i >= 0; i--){
-      $allFields.bind(evts[i] + '.tv', function() {
+      $allFields.bind(evts[i] + '.tv', function(event) {
+        if (event.type == 'click' && !/(radio|checkbox)/i.test(event.target.type)) {return;}
         $(this).trigger('validate');
       });
     }

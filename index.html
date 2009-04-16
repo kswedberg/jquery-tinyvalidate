@@ -11,7 +11,7 @@
 
   <script type="text/javascript">
     $(document).ready(function() {
-      $('form.full').tinyvalidate();
+      $('form.full').tinyvalidate({otherEvents: 'blur, click'});
       $('a.cancel').click(function() {
         $(this).parents('form').tinyvalidate('removeErrors');
         return false;
