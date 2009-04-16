@@ -3,137 +3,101 @@
 <head>
   <title>TinyValidate jQuery Plugin</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />  
-  <link href="/styles/screen.css" media="screen, projection" rel="stylesheet" type="text/css" />
-  <link href="/styles/print.css" media="print" rel="stylesheet" type="text/css" />
+  <link href="../extras/screen.css" media="screen, projection" rel="stylesheet" type="text/css" />
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3/jquery.min.js" type="text/javascript"></script>
-  <script src="jquery.tinyvalidate.js" type="text/javascript"></script>
+  <script src="../jquery.tinyvalidate.js" type="text/javascript"></script>
+  <script src="jquery.form.js" type="text/javascript"></script>
   <script type="text/javascript">
-    $(document).ready(function() {
+  
+  // here we are cherry-picking the validation rules we need, 
+  // rather than loading the entire jquery.tinyvalidate.rules.js file
+  $.tinyvalidate.rules.required = {
+    ruleClass: 'required',
+    rule: function(r) {
+      return (/\S+/).test(r);
+    },
+    text: 'required field has no value'
+  };
+  $.tinyvalidate.rules.email = {
+    ruleClass: 'email',
+    rule: function(r) {
+      return (/^\S+[@]\w+(\.[a-zA-Z0-9]{2,4}){1,4}/).test(r);
+    },
+    text: 'incorrect E-mail format',
+    check: 'value'
+  };
+  
+  $(document).ready(function() {
 
-      var $contactForm =  $('form:first');
-      
-      var submitOptions = {
-        clearForm: true,
-        beforeSubmit: function() {
-          $('<span class="loading"><img src="loading.gif" alt="sending... " /></span>').prependTo('div.actions');
-          $('<div class="overlay"></div>').css({opacity: '.4'}).appendTo($contactForm);
-        },
-        success: function(responseText) {
-          $contactForm.slideUp(200, function() {        
-            var response = $('<div>' + responseText + '</div>').find('p.intro').html();
-            $('.loading').insertAfter(this).addClass('error').html(response);
-          });
-          $('div.overlay').fadeOut(100, function() {
-            $(this).remove();
-          });
-        }
-      };
-      
-      
-      $contactForm.tinyvalidate({
-        submitOverride: function() {
-          $contactForm.ajaxSubmit(submitOptions);
-        }
-      });
-      
-      
+    var $contactForm =  $('form.comment');
+    
+    
+    $contactForm.tinyvalidate({
+      submitOverride: function(opts) {
+        $wrapper = $(opts.summary.wrapper).addClass('submitOverride');
+        $contactForm.ajaxSubmit({
+          data: $(this).serialize(),
+          dataType: 'json',
+          success: function(responseText) {
+            var msg = responseText.message;
+            $('.submitOverride').remove();
+            if (responseText.error_length) {
+              var errorNames = [];
+              msg += '<ul>';
+              for (var i in responseText.errors) {
+                msg += '<li>' + i + ': ' + responseText.errors[i] + '</li>';
+                errorNames.push('[name=' + i + ']');
+              }
+              $contactForm.find(errorNames.join(',')).data('error', 'true').trigger('toggleErrorClass');
+              msg += '</ul>';
+              
+              $wrapper.html(msg).appendTo($contactForm);
+            } else {
+              $contactForm.slideUp(200, function() {
+                $wrapper
+                .removeClass().addClass('success')
+                .html(msg)
+                .insertAfter(this);
+              });
+            }              
+          }
+        });
+      }
     });
+    
+  });
   </script>
   
-  <style type="text/css">
-    #submiterror span {
-      display: block;
-      padding: 0;
-      margin: 3px 0;
-    }
-  </style>
-
-  <!--[if lt IE 8]>
-  <link rel="stylesheet" href="/styles/ie.css" type="text/css" media="screen, projection">
-  <![endif]-->
 </head>
 <body>
 <div id="header" class="container">
   <h1>ajaxForm Example - TinyValidate jQuery Plugin</h1>  
-</div><!-- close header -->
+</div>
 
 <hr class="access" />
 
 <div id="content" class="container">
 
   <p>View source to see how to call the tinyvalidate method.</p>
-  <form name="foo" action="#"> 
-    <fieldset> 
-    <legend>Project Information</legend> 
-      <div class="text"> 
-        <label for="project-name">Project Name: *</label> 
-        <input type="text" class="required" id="project-name" />
-      </div> 
-      <div class="text"> 
-        <label for="project-bud">Project Budget:</label> 
-        <input class="currency" size="8" type="text" id="project-bud" /> 
-        <span class="unit">US Dollars</span> 
+  <h3>Comment Form</h3>
+  <form class="comment" action="formhandler.php" method="post"> 
+    <fieldset>
+      <div class="text">
+        <label for="full_name">Name *</label>
+        <input class="required" type="text" name="full_name" value="" id="full_name" />
       </div>
-      <div class="text"> 
-        <label for="project-zip">Project Zip Code: *</label> 
-        <input class="zip" type="text" id="project-zip" /> 
+      <div class="text">
+        <label for="email">Email *</label>
+        <input class="required email" type="text" name="email" value="" id="email" />
       </div>
-      <div class="dropdown">
-        <label for="project-type">Project Type:</label>
-        <select id="project-type" name="project-type">
-          <option value="good">good</option>
-          <option value="bad">bad</option>
-          <option value="ugly">ugly</option>
-        </select>
+      <div class="textarea">
+        <label for="comment">Comment</label>
+        <textarea name="comment" rows="8" cols="20"></textarea>
       </div>
-      <fieldset class="radio choose-one"> 
-        <legend>Size of Project</legend> 
-        <div>
-          <input type="radio" name="size" id="twenty" value="1" /> 
-          <label for="twenty">20 People</label> 
-        </div> 
-        <div> 
-          <input type="radio" name="size" id="more" value="2" /> 
-          <label for="more">More than 20 People</label> 
-        </div>
-      </fieldset> 
-      <div class="textarea"> 
-        <label for="project-desc">Project Description</label> 
-        <textarea rows="4" cols="50" id="project-desc"></textarea> 
-      </div> 
-    </fieldset> 
-    <fieldset class="max max-1"> 
-      <legend>I am a... <span>(choose no more than two)</span></legend> 
-      <div class="checkbox"> 
-        <input type="checkbox" name="i-am" id="driver" value="1" /> 
-        <label for="driver">Licensed Driver</label> 
-      </div> 
-      <div class="checkbox"> 
-        <input type="checkbox" name="i-am" id="timebomb" value="2" /> 
-        <label for="timebomb">Walking Timebomb</label> 
-      </div> 
-      <div class="checkbox"> 
-        <input type="checkbox" name="i-am" id="fiscal" value="3" /> 
-        <label for="fiscal">Fiscal Nightmare</label> 
-      </div>     
-    </fieldset> 
-    <fieldset class="actions"> 
-      <legend>Form Actions</legend> 
-        <input name="submitfoo" class="submit" type="submit" value="Submit Form" /> 
-        <input class="reset" type="reset" value="Reset" /> 
-        <a class="cancel" href="#">Cancel</a> 
-    </fieldset> 
-  </form>
-
-  <form name="bar" action="#"> 
-    <fieldset> 
-      <h3 class="legend">Add New Project</h3> 
-      <div class="text"> 
-        <label for="proj-name" class="required">Project Name</label> 
-        <input class="required" type="text" id="proj-name" /> 
-      </div> 
-      <input name="submitbar" class="submit" type="submit" value="Create" /> 
-    </fieldset> 
+    </fieldset>
+    <div class="actions">
+      <input type="submit" name="send_comment" value="send" id="send_comment" />
+    </div>
   </form>
     
 </div><!-- close content -->

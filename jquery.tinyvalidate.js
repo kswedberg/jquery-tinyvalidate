@@ -181,7 +181,7 @@ $.fn.tinyvalidate = function(options) {
       $allFields.trigger('validate');
       $form.trigger('displaySummary', [errorCount]);
       if (errorCount) {
-        return false;        
+        return false;
       } else if (opts.submitOverride) {
         $form.tinyvalidate('removeErrors');
         opts.submitOverride(opts);
@@ -199,9 +199,7 @@ $.fn.tinyvalidate = function(options) {
       });
     }
     
-    $.tinyvalidate.addErrorClass = function(input) {
-      $(input).parents(inline.containerTag + ':first').addClass(inline.containerErrorClass);
-    };
+    
     
   }); //end return this.each
   
@@ -298,5 +296,4 @@ function log(obj) {
     alert(obj);
   }
 }
-
 })(jQuery);
