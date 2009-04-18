@@ -1,8 +1,8 @@
 /*
  * jQuery TinyValidate plugin
- * A (Relatively) Tiny jQuery Validation Plugin
- * Version 1.2  (04/13/2009)
- * @requires jQuery v1.3
+ * @desc A (Relatively) Tiny jQuery Validation Plugin
+ * @version 1.3  (04/18/2009)
+ * @requires jQuery v1.3+
  * @author Karl Swedberg
  *
  * Dual licensed under the MIT and GPL licenses:
@@ -14,7 +14,7 @@
 ;(function($) { 
 
 $.tinyvalidate = {
-  version: '1.2',
+  version: '1.3',
   callCounter: -1,
   maxnum: 0,
   rules: {}
@@ -109,7 +109,7 @@ $.fn.tinyvalidate = function(options) {
       .bind('toggleErrorClass', function(event) {
         var $thisField = $(this);
 
-        var $thisContainer = (/(radio|checkbox)/).test($thisField.data('ruleName')) ? $thisField : $thisField.parents(inline.containerTag + ':first');
+        var $thisContainer = ($thisField.find(':checkbox, :radio').length) ? $thisField : $thisField.parents(inline.containerTag + ':first');
         if (!!$thisField.data('error')) {
           $thisContainer.addClass(inline.containerErrorClass);
         } else {
@@ -122,9 +122,8 @@ $.fn.tinyvalidate = function(options) {
       $form.bind('displaySummary', function(event, errors) {
         $errorSummary.hide();
         if (errors) {
-          var preMessage = summary.preMessage.replace(/\{num\}/g, errors).replace(/\{([^\|]+)\|([^}]+)\}/, function(str, singular, plural) {
-            return (errors*1 == 1) ? singular : plural;
-          });
+          var preMessage = summary.preMessage.replace(/\{num\}/g, errors);
+          preMessage = pluralize(preMessage, errors);
           var fullSummary = summary.lineItems
               ? preMessage +  itemWrapperSplitTag[0] + summaryItems.join(lineItemDivider) + itemWrapperSplitTag[1] + summary.postMessage
               : preMessage + summary.postMessage;
@@ -200,11 +199,7 @@ $.fn.tinyvalidate = function(options) {
       });
     }
     
-    
-    
   }); //end return this.each
-  
-    
 }; // end $.fn.tinyvalidate
 
 /** ===plugin defaults
@@ -245,13 +240,9 @@ $.fn.tinyvalidate.defaults.summary = {
   }
 };
 
-
-/** PRIVATE safeguards for inline insertion 
-    in case plugin user chooses wrong insertion type
+/** PRIVATE safeguards for inline insertion in case plugin user chooses wrong insertion type
     feel free to ignore this part.
-************************************************************
 ************************************************************/
-
 $.tinyvalidate.inputs = {
   append: 'insertAfter',
   appendTo: 'insertAfterafter',
@@ -272,6 +263,8 @@ $.tinyvalidate.containers = {
   before: 'insertBefore',
   insertBefore: 'insertBefore'
 };
+
+/* other private functions */
 function setElementType(tag) {
   if (/(input|textarea|select)/i.test(tag)) {
     return 'inputs';
@@ -296,5 +289,10 @@ function log(obj) {
   if (arguments[1] == 'alert') {
     alert(obj);
   }
+}
+function pluralize(word, errs) {
+  return word.replace(/\{([^\|]+)\|([^}]+)\}/g, function(str, singular, plural) {
+    return (errs*1 == 1) ? singular : plural;
+  });
 }
 })(jQuery);

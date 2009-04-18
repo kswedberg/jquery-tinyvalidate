@@ -26,6 +26,20 @@ $.tinyvalidate.rules.zip = {
   text: 'incorrect ZIP code',
   check: 'value'
 };
+$.tinyvalidate.rules.equals = {
+  ruleClass: 'equals',
+  rule: function(el) {
+    var previousValue = false;
+    $(el).parents('form:first').find('[name=' + el[0].name + ']')
+    .each(function(index) {
+      if (index && this.value !== previousValue) { previousValue = false; return false;}
+      previousValue = this.value;
+    });
+    return !previousValue ? false : true;
+  },
+  text: 'field value doesn\'t match',
+  check: 'element'
+};
 
 $.tinyvalidate.rules.date = {
   ruleClass: 'date',
@@ -34,7 +48,7 @@ $.tinyvalidate.rules.date = {
     return (/(0\d|1[0-2])\/([0-2]\d|3[0-1])\/[1-2]\d{3}/).test(r);
     // && (+r.slice(-4) < +thisYear-10);
   },
-  text: '&laquo; incorrect date',
+  text: 'incorrect date',
   check: 'value'
 };
 
@@ -43,7 +57,7 @@ $.tinyvalidate.rules.phone = {
   rule: function(r) {
     return (/\(?\d{3}\)?[\. -]?\d{3}[\. -]?\d{4}/).test(r) || r == '';
   },
-  text: '&laquo; phone number is incorrectly formatted ',
+  text: 'phone number is incorrectly formatted ',
   check: 'value'
 };
 
@@ -53,7 +67,7 @@ $.tinyvalidate.rules.ssn = {
   rule: function(r) {
     return (/\d{3}-\d{2}-\d{4}/).test(r);
   },
-  text: '&laquo; incorrect social security format (must be xxx-xx-xxxx)',
+  text: 'incorrect social security format (must be xxx-xx-xxxx)',
   check: 'value'
 };
 
@@ -62,7 +76,7 @@ $.tinyvalidate.rules.currency = {
   rule: function(r) {
     return (/^\d+(\.\d\d)?$/).test(r) || r == ''; 
   },
-  text: '&laquo; incorrect currency format',
+  text: 'incorrect currency format',
   check: 'value'
 };
 
@@ -73,7 +87,7 @@ $.tinyvalidate.rules.requiredradio = {
       return el.find(':checked').length;
     }
   },
-  text: '&laquo; at least one option must be selected',
+  text: 'at least one option must be selected',
   check: 'element'
 };
 
@@ -84,6 +98,6 @@ $.tinyvalidate.rules.maxradio = {
     $.tinyvalidate.maxnum = el[0].className.replace(/.*max-(\d+).*/,'$1');
     return (el.find('input:checked').length <= +$.tinyvalidate.maxnum);
   },
-  text: '&laquo; exceeded the maximum number of items that may be checked',
+  text: 'exceeded the maximum number of items that may be checked',
   check: 'element'
 };

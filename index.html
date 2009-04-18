@@ -16,6 +16,7 @@
         $(this).parents('form').tinyvalidate('removeErrors');
         return false;
       });
+      
       $('form:last').tinyvalidate({inline: false});
     });
   </script>
@@ -104,6 +105,15 @@
         <label for="email">Email</label>
         <input class="required email" type="text" name="email" value="" id="email" />
       </div>
+      <div class="text">
+        <label for="password">Password</label>
+        <input class="required" type="password" name="password" value="" id="password" />
+      </div>
+      <div class="text">
+        <label for="password_confirm">Confirm Password</label>
+        <input class="required equals" type="password" name="password" value="" id="password_confirm" />
+      </div>
+      
       <div class="textarea">
         <label for="comment">Comment</label>
         <textarea name="comment" rows="8" cols="20"></textarea>
