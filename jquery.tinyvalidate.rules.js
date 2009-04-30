@@ -10,6 +10,7 @@ $.tinyvalidate.rules.required = {
   },
   text: 'required field has no value'
 };
+
 $.tinyvalidate.rules.email = {
   ruleClass: 'email',
   rule: function(r) {
@@ -18,6 +19,16 @@ $.tinyvalidate.rules.email = {
   text: 'incorrect E-mail format',
   check: 'value'
 };
+
+$.tinyvalidate.rules.url = {
+  ruleClass: 'url',
+  rule: function(r) {
+    return (/^http(s?)\/\/:/).test(r);
+  },
+  text: 'incorrect URL format',
+  check: 'value'
+};
+
 $.tinyvalidate.rules.zip = {
   ruleClass: 'zip',
   rule: function(r) {
@@ -25,20 +36,6 @@ $.tinyvalidate.rules.zip = {
   },
   text: 'incorrect ZIP code',
   check: 'value'
-};
-$.tinyvalidate.rules.equals = {
-  ruleClass: 'equals',
-  rule: function(el) {
-    var previousValue = false;
-    $(el).parents('form:first').find('[name=' + el[0].name + ']')
-    .each(function(index) {
-      if (index && this.value !== previousValue) { previousValue = false; return false;}
-      previousValue = this.value;
-    });
-    return !previousValue ? false : true;
-  },
-  text: 'field value doesn\'t match',
-  check: 'element'
 };
 
 $.tinyvalidate.rules.date = {
@@ -99,5 +96,20 @@ $.tinyvalidate.rules.maxradio = {
     return (el.find('input:checked').length <= +$.tinyvalidate.maxnum);
   },
   text: 'exceeded the maximum number of items that may be checked',
+  check: 'element'
+};
+
+$.tinyvalidate.rules.equals = {
+  ruleClass: 'equals',
+  rule: function(el) {
+    var previousValue = false;
+    $(el).parents('form:first').find('[name=' + el[0].name + ']')
+    .each(function(index) {
+      if (index && this.value !== previousValue) { previousValue = false; return false;}
+      previousValue = this.value;
+    });
+    return !previousValue ? false : true;
+  },
+  text: 'field value doesn\'t match',
   check: 'element'
 };
