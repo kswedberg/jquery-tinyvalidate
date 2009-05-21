@@ -89,21 +89,23 @@ $.fn.tinyvalidate = function(options) {
     });
 
     if (inline) {
-      $allFields
-      .bind('addNotice', function(event, num) {
-          var $thisField = $(this),
-              ruleText = $thisField.data('rule')[num].text;
-          var $thisNotice = $(inline.errorElement);
-          $thisNotice.html(ruleText);
-          $thisNotice
-          [$(this).data('insertion')](this)
-          .hide()
-          [inline.errorAnimate.effect](inline.errorAnimate.speed);
+      if (inline.errorElement) {
+        $allFields
+        .bind('addNotice', function(event, num) {
+            var $thisField = $(this),
+                ruleText = $thisField.data('rule')[num].text;
+            var $thisNotice = $(inline.errorElement);
+            $thisNotice.html(ruleText);
+            $thisNotice
+            [$(this).data('insertion')](this)
+            .hide()
+            [inline.errorAnimate.effect](inline.errorAnimate.speed);
           
-          $thisField.bind('removeNotice', function() {
-            $thisNotice.remove();          
-          });
-      });
+            $thisField.bind('removeNotice', function() {
+              $thisNotice.remove();
+            });
+        });
+      }
 
       $allFields
       .bind('toggleErrorClass', function(event) {
@@ -186,19 +188,19 @@ $.fn.tinyvalidate = function(options) {
         opts.submitOverride(opts);
         return false;
       }
-
     });
     
-    if (typeof opts.otherEvents == 'string') {
-      var evts = opts.otherEvents.replace(/,\s+/g,',').split(',');
+    if (opts.otherEvents) {
+      if (typeof opts.otherEvents == 'string') {
+        var evts = opts.otherEvents.replace(/,\s+/g,',').split(',');
+      }
+      for (var i = evts.length - 1; i >= 0; i--){
+        $allFields.bind(evts[i] + '.tv', function(event) {
+          if (event.type == 'click' && !/(radio|checkbox)/i.test(event.target.type)) {return;}
+          $(this).trigger('validate');
+        });
+      }
     }
-    for (var i = evts.length - 1; i >= 0; i--){
-      $allFields.bind(evts[i] + '.tv', function(event) {
-        if (event.type == 'click' && !/(radio|checkbox)/i.test(event.target.type)) {return;}
-        $(this).trigger('validate');
-      });
-    }
-    
   }); //end return this.each
 }; // end $.fn.tinyvalidate
 
