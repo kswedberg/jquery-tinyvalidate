@@ -61,7 +61,7 @@ $.fn.tinyvalidate = function(options) {
     if (opts.summary) {
       var summary = opts.summary,
           $errorSummary = $(summary.wrapper).hide();
-      $(summary.insertTo == 'form' ? $form[0] : summary.inserTo)[summary.insertType]($errorSummary);
+      $(summary.insertTo == 'form' ? $form[0] : summary.insertTo)[summary.insertType]($errorSummary);
 
       if (summary.lineItems) {
         var itemWrapperSplitTag = splitTag(summary.lineItems.wrapper),
@@ -287,14 +287,13 @@ function isEmpty(obj) {
 function log(obj) {
   if (window.console && window.console.log) {
     window.console.log(obj);
-  } else 
-  if (arguments[1] == 'alert') {
+  } else if (arguments[1] == 'alert') {
     alert(obj);
   }
 }
-function pluralize(word, errs) {
-  return word.replace(/\{([^\|]+)\|([^}]+)\}/g, function(str, singular, plural) {
-    return (errs*1 == 1) ? singular : plural;
+function pluralize(word, number) {
+  return word.replace(/\{([^\|]+)\|([^}]+)\}/g, function(fullmatch, singular, plural) {
+    return (number*1 == 1) ? singular : plural;
   });
 }
 })(jQuery);

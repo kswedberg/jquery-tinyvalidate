@@ -33,7 +33,7 @@
     
     $contactForm.tinyvalidate({
       submitOverride: function(opts) {
-        $wrapper = $(opts.summary.wrapper).addClass('submitOverride');
+        var $wrapper = $(opts.summary.wrapper).addClass('submitOverride');
         
         $contactForm.ajaxSubmit({
           data: $(this).serialize(),
