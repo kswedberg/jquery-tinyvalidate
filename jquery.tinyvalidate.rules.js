@@ -95,7 +95,9 @@ $.tinyvalidate.rules.maxradio = {
     $.tinyvalidate.maxnum = el[0].className.replace(/.*max-(\d+).*/,'$1');
     return (el.find('input:checked').length <= +$.tinyvalidate.maxnum);
   },
-  text: 'exceeded the maximum number of items that may be checked',
+  text: function() {
+    return 'maximum number of items that may be checked is ' + this.className.replace(/.*max-(\d+).*/,'$1');
+  },
   check: 'element'
 };
 

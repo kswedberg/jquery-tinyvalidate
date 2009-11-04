@@ -93,7 +93,7 @@ $.fn.tinyvalidate = function(options) {
         $allFields
         .bind('addNotice', function(event, num) {
             var $thisField = $(this),
-                ruleText = $thisField.data('rule')[num].text;
+                ruleText = $.isFunction($thisField.data('rule')[num].text) ? $thisField.data('rule')[num].text.call(this) : $thisField.data('rule')[num].text;
             var $thisNotice = $(inline.errorElement);
             $thisNotice.html(ruleText);
             $thisNotice
@@ -156,8 +156,11 @@ $.fn.tinyvalidate = function(options) {
     $allFields.bind('validate', function(event) {
       var thisField = this,
           $thisField = $(this).trigger('removeNotice');
+
       var thisRule = $thisField.data('rule'), trl = thisRule.length;
+      $thisField.removeData('error');
       for (var i=0; i < trl; i++) {
+        thisRule[i].elem && thisRule[i].elem($thisField);
         var arg = thisRule[i].check == 'element' ? $thisField : $thisField.val();
         if (!thisRule[i].rule(arg) && !$thisField.is(':hidden')) {
           if ($thisField.is('.required') && thisRule[i].ruleClass != 'required' && !$thisField.val()) {continue;}
@@ -166,9 +169,6 @@ $.fn.tinyvalidate = function(options) {
           .trigger('addNotice', [i]);
           $form.trigger('lineItemBuilder', [this, thisRule[i]]);
           errorCount++;
-        } else {
-          $thisField
-          .removeData('error');
         }
       }
       $thisField.trigger('toggleErrorClass');
@@ -278,8 +278,8 @@ function splitTag(element) {
   return element.match(/[^>]+>/g);
 }
 function isEmpty(obj) {
-  for(var prop in obj) {
-    if(obj.hasOwnProperty(prop))
+  for (var prop in obj) {
+    if (obj.hasOwnProperty(prop))
     return false;
   }
   return true;
