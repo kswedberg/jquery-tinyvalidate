@@ -216,7 +216,7 @@ $.fn.tinyvalidate.defaults = {
 
 $.fn.tinyvalidate.defaults.inline = {
   insertType: 'after',
-  errorElement: '<span class="error-message"></span>',
+  errorElement: '<div class="error-message"></div>',
   errorAnimate: {
     effect: 'fadeIn',
     speed: 400
@@ -229,7 +229,7 @@ $.fn.tinyvalidate.defaults.summary = {
   insertTo: 'form',
   insertType: 'append',
   wrapper: '<div class="error-summary"></div>',
-  preMessage: 'There was a problem processing your request. <br>Please correct the {num} highlighted {field|fields} and try again.<ul>',
+  preMessage: 'Please review the {num} highlighted {field|fields} and try again.<ul>',
   postMessage: '</ul>',
   messageAnimate: {
     effect: 'fadeIn',
