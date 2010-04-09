@@ -9,7 +9,7 @@ $.tinyvalidate.rules.required = {
   rule: function(r) {
     return (/\S+/).test(r);
   },
-  text: 'required field has no value'
+  text: 'This field is required'
 };
 
 $.tinyvalidate.rules.email = {
@@ -17,7 +17,7 @@ $.tinyvalidate.rules.email = {
   rule: function(r) {
     return (/^\S+[@]\w+(\.[a-zA-Z0-9]{2,4}){1,4}/).test(r) || r == '';
   },
-  text: 'incorrect E-mail format',
+  text: 'Invalid Email Format',
   check: 'value'
 };
 
@@ -26,7 +26,7 @@ $.tinyvalidate.rules.url = {
   rule: function(r) {
     return (/^http(s?)\/\/:/).test(r);
   },
-  text: 'incorrect URL format',
+  text: 'Invalid URL Format',
   check: 'value'
 };
 
@@ -35,7 +35,7 @@ $.tinyvalidate.rules.zip = {
   rule: function(r) {
     return (/^\d{5}(-\d{4})?$/).test(r);
   },
-  text: 'incorrect ZIP code',
+  text: 'Invalid Zip Code Format',
   check: 'value'
 };
 
@@ -46,7 +46,7 @@ $.tinyvalidate.rules.date = {
     return (/(0\d|1[0-2])\/([0-2]\d|3[0-1])\/[1-2]\d{3}/).test(r);
     // && (+r.slice(-4) < +thisYear-10);
   },
-  text: 'incorrect date',
+  text: 'Invalid Date Format',
   check: 'value'
 };
 
@@ -55,7 +55,7 @@ $.tinyvalidate.rules.phone = {
   rule: function(r) {
     return (/\(?\d{3}\)?[\. -]?\d{3}[\. -]?\d{4}/).test(r) || r == '';
   },
-  text: 'phone number is incorrectly formatted ',
+  text: 'Invalid Format ',
   check: 'value'
 };
 
@@ -65,7 +65,7 @@ $.tinyvalidate.rules.ssn = {
   rule: function(r) {
     return (/\d{3}-\d{2}-\d{4}/).test(r);
   },
-  text: 'incorrect social security format (must be xxx-xx-xxxx)',
+  text: 'Invalid Format (xxx-xx-xxxx)',
   check: 'value'
 };
 
@@ -74,7 +74,7 @@ $.tinyvalidate.rules.currency = {
   rule: function(r) {
     return (/^\d+(\.\d\d)?$/).test(r) || r == '';
   },
-  text: 'incorrect currency format',
+  text: 'Invalid Currency Format',
   check: 'value'
 };
 
@@ -85,7 +85,7 @@ $.tinyvalidate.rules.requiredradio = {
       return el.find(':checked').length;
     }
   },
-  text: 'at least one option must be selected',
+  text: 'At least one option is required',
   check: 'element'
 };
 
@@ -97,7 +97,7 @@ $.tinyvalidate.rules.maxradio = {
     return (el.find('input:checked').length <= +$.tinyvalidate.maxnum);
   },
   text: function() {
-    return 'maximum number of items that may be checked is ' + this.className.replace(/.*max-(\d+).*/,'$1');
+    return 'No more than ' + this.className.replace(/.*max-(\d+).*/,'$1') + 'options may be selected';
   },
   check: 'element'
 };
@@ -116,7 +116,7 @@ $.tinyvalidate.rules.equals = {
     });
     return previousValue === false ? false : true;
   },
-  text: 'field value doesn\'t match',
+  text: 'These fields must match',
   check: 'element'
 };
 
