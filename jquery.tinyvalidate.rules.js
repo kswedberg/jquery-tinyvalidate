@@ -1,7 +1,8 @@
 /*
  * Validation Rules for TinyValidate Plugin
- * 
+ *
 */
+(function($) {
 
 $.tinyvalidate.rules.required = {
   ruleClass: 'required',
@@ -14,7 +15,7 @@ $.tinyvalidate.rules.required = {
 $.tinyvalidate.rules.email = {
   ruleClass: 'email',
   rule: function(r) {
-    return (/^\S+[@]\w+(\.[a-zA-Z0-9]{2,4}){1,4}/).test(r);
+    return (/^\S+[@]\w+(\.[a-zA-Z0-9]{2,4}){1,4}/).test(r) || r == '';
   },
   text: 'incorrect E-mail format',
   check: 'value'
@@ -71,7 +72,7 @@ $.tinyvalidate.rules.ssn = {
 $.tinyvalidate.rules.currency = {
   ruleClass: 'currency',
   rule: function(r) {
-    return (/^\d+(\.\d\d)?$/).test(r) || r == ''; 
+    return (/^\d+(\.\d\d)?$/).test(r) || r == '';
   },
   text: 'incorrect currency format',
   check: 'value'
@@ -107,11 +108,16 @@ $.tinyvalidate.rules.equals = {
     var previousValue = false;
     $(el).parents('form:first').find('[name=' + el[0].name + ']')
     .each(function(index) {
-      if (index && this.value !== previousValue) { previousValue = false; return false;}
+      if (index && this.value !== previousValue) {
+        previousValue = false;
+        return false;
+      }
       previousValue = this.value;
     });
-    return !previousValue ? false : true;
+    return previousValue === false ? false : true;
   },
   text: 'field value doesn\'t match',
   check: 'element'
 };
+
+})(jQuery);

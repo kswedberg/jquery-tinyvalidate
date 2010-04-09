@@ -1,7 +1,7 @@
 /*
  * jQuery TinyValidate plugin
  * @desc A (Relatively) Tiny jQuery Validation Plugin
- * @version 1.3  (04/18/2009)
+ * @version 1.4  (April 8, 2010)
  * @requires jQuery v1.3+
  * @author Karl Swedberg
  *
@@ -11,14 +11,17 @@
  *
  */
 
-;(function($) { 
+(function($) {
 
 $.tinyvalidate = {
-  version: '1.3',
+  version: '1.4',
   callCounter: -1,
   maxnum: 0,
   rules: {}
 };
+var ins = {};
+ins.inputs = {};
+ins.containers = {};
 
 $.fn.tinyvalidate = function(options) {
   var errorCount = 0;
@@ -34,7 +37,7 @@ $.fn.tinyvalidate = function(options) {
     var $form = $(this),
         $allFields = $([]);
     idSuffix += (index ? '-' + index : '');
-    
+
     // merge defaults, per-call options, and per-selector (form) options
     var opts = $.extend(true, {}, $.fn.tinyvalidate.defaults, options || {}, $.metadata ? $form.metadata() : $.meta ? $form.data() : {});
     var summaryItems = [],
@@ -54,7 +57,7 @@ $.fn.tinyvalidate = function(options) {
       .trigger('removeNotice')
       .trigger('toggleErrorClass');
       $form.trigger('hideSummary');
-      return this;      
+      return this;
     }
 
     //set up summary
@@ -83,7 +86,7 @@ $.fn.tinyvalidate = function(options) {
         .data('elementType', elType);
         $allFields = $allFields.add($field);
         if (inline) {
-          $field.data('insertion', $.tinyvalidate[elType][inline.insertType]);
+          $field.data('insertion', ins[elType][inline.insertType]);
         }
       });
     });
@@ -100,7 +103,7 @@ $.fn.tinyvalidate = function(options) {
             [$(this).data('insertion')](this)
             .hide()
             [inline.errorAnimate.effect](inline.errorAnimate.speed);
-          
+
             $thisField.bind('removeNotice', function() {
               $thisNotice.remove();
             });
@@ -119,7 +122,7 @@ $.fn.tinyvalidate = function(options) {
         }
       });
     }
-    
+
     if (summary) {
       $form.bind('displaySummary', function(event, errors) {
         $errorSummary.hide();
@@ -136,23 +139,28 @@ $.fn.tinyvalidate = function(options) {
       $form.bind('hideSummary', function() {
         $errorSummary.hide();
       });
-      
+
       if (summary.lineItems) {
 
         $form.bind('lineItemBuilder', function(event, field, therule) {
           var $field = $(field);
-          var fieldLabel = $field.data('elementType') == 'containers'
-              ? $field.children(':first').text()
-              : $field.prev().text().replace(/(\*|:)$/,'');
+          var $fieldLabel = $('<div></div>').html(
+            $field.data('elementType') == 'containers'
+              ? $field.children(':first').html()
+              : $field.prev().clone().html()
+          );
+          $fieldLabel.children().remove();
+          var fieldLabel = $fieldLabel.text().replace(/[\*:\s]+$/,'');
+
           if (summary.lineItems.linkify) {
             fieldLabel = '<a href="#' + ($field.data('elementType') == 'containers' ? $field.find('input')[0].id : field.id) + '">' + fieldLabel + '</a>';
           }
           summaryItems.push(fieldLabel + ' ' + itemErrorSplitTag[0] + therule.text + itemErrorSplitTag[1]);
         });
       }
-      
+
     }
-    
+
     $allFields.bind('validate', function(event) {
       var thisField = this,
           $thisField = $(this).trigger('removeNotice');
@@ -175,7 +183,7 @@ $.fn.tinyvalidate = function(options) {
     });
 
     // bind to user interactions
-    
+
     $form.bind('submit.tv', function() {
       errorCount = 0;
       summaryItems = [];
@@ -185,14 +193,14 @@ $.fn.tinyvalidate = function(options) {
         return false;
       } else if (opts.submitOverride) {
         $form.tinyvalidate('removeErrors');
-        opts.submitOverride(opts);
+        opts.submitOverride.call($form[0], opts);
         return false;
       }
     });
-    
+
     if (opts.otherEvents) {
       if (typeof opts.otherEvents == 'string') {
-        var evts = opts.otherEvents.replace(/,\s+/g,',').split(',');
+        var evts = opts.otherEvents.split(/\s*,\s*/);
       }
       for (var i = evts.length - 1; i >= 0; i--){
         $allFields.bind(evts[i] + '.tv', function(event) {
@@ -236,7 +244,7 @@ $.fn.tinyvalidate.defaults.summary = {
     speed: 400
   },
   lineItems: { // set to null if you don't want to include details in the summary message
-    wrapper: '<li></li>', 
+    wrapper: '<li></li>',
     errorElement: '<span class="error-message"></span>',
     linkify: true // create link in summary details to inputs with errors
   }
@@ -245,26 +253,26 @@ $.fn.tinyvalidate.defaults.summary = {
 /** PRIVATE safeguards for inline insertion in case plugin user chooses wrong insertion type
     feel free to ignore this part.
 ************************************************************/
-$.tinyvalidate.inputs = {
+$.extend(ins.inputs, {
   append: 'insertAfter',
-  appendTo: 'insertAfterafter',
-  prepend: 'insertBefore',
-  prependTo: 'insertBefore',
+  appendTo: 'insertAfter',
   after: 'insertAfter',
   insertAfter: 'insertAfter',
+  prepend: 'insertBefore',
+  prependTo: 'insertBefore',
   before: 'insertBefore',
   insertBefore: 'insertBefore'
-};
-$.tinyvalidate.containers = {
+});
+$.extend(ins.containers, {
   append: 'appendTo',
   appendTo: 'appendTo',
-  prepend: 'prependTo',
-  prependTo: 'prependTo',
   after: 'appendTo',
   insertAfter: 'appendTo',
+  prepend: 'prependTo',
+  prependTo: 'prependTo',
   before: 'insertBefore',
   insertBefore: 'insertBefore'
-};
+});
 
 /* other private functions */
 function setElementType(tag) {
@@ -279,16 +287,15 @@ function splitTag(element) {
 }
 function isEmpty(obj) {
   for (var prop in obj) {
-    if (obj.hasOwnProperty(prop))
-    return false;
+    if (obj.hasOwnProperty(prop)) {
+      return false;
+    }
   }
   return true;
 }
-function log(obj) {
+function log() {
   if (window.console && window.console.log) {
-    window.console.log(obj);
-  } else if (arguments[1] == 'alert') {
-    alert(obj);
+    console.log.apply(console, arguments);
   }
 }
 function pluralize(word, number) {
