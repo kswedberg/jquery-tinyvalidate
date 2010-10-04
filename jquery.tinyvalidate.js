@@ -93,16 +93,19 @@ $.fn.tinyvalidate = function(options) {
 
     if (inline) {
       if (inline.errorElement) {
+
         $allFields
         .bind('addNotice', function(event, num) {
+
             var $thisField = $(this),
                 ruleText = $.isFunction($thisField.data('rule')[num].text) ? $thisField.data('rule')[num].text.call(this) : $thisField.data('rule')[num].text;
+
             var $thisNotice = $(inline.errorElement);
             $thisNotice.html(ruleText);
             $thisNotice
             [$(this).data('insertion')](this)
-            .hide()
-            [inline.errorAnimate.effect](inline.errorAnimate.speed);
+            .hide();
+            $thisNotice[inline.errorAnimate.effect](inline.errorAnimate.speed);
 
             $thisField.bind('removeNotice', function() {
               $thisNotice.remove();
@@ -150,12 +153,14 @@ $.fn.tinyvalidate = function(options) {
               : $field.prev().clone().html()
           );
           $fieldLabel.children().remove();
-          var fieldLabel = $fieldLabel.text().replace(/[\*:\s]+$/,'');
+          var fieldLabel = $fieldLabel.text().replace(/[\*:\s]+$/,''),
+              ruleText = $.isFunction(therule.text) ? therule.text.call(this) : therule.text;
 
           if (summary.lineItems.linkify) {
             fieldLabel = '<a href="#' + ($field.data('elementType') == 'containers' ? $field.find('input')[0].id : field.id) + '">' + fieldLabel + '</a>';
           }
-          summaryItems.push(fieldLabel + ' ' + itemErrorSplitTag[0] + therule.text + itemErrorSplitTag[1]);
+
+          summaryItems.push(fieldLabel + ' ' + itemErrorSplitTag[0] + ruleText + itemErrorSplitTag[1]);
         });
       }
 
