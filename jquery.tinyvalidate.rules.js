@@ -97,7 +97,7 @@ $.tinyvalidate.rules.maxradio = {
     return (el.find('input:checked').length <= +$.tinyvalidate.maxnum);
   },
   text: function() {
-    return 'No more than ' + this.className.replace(/.*max-(\d+).*/,'$1') + 'options may be selected';
+    return 'No more than ' + this.className.replace(/.*max-(\d+).*/,'$1') + ' options may be selected';
   },
   check: 'element'
 };
