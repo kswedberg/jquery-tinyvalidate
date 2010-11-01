@@ -1,16 +1,18 @@
-/*
- * jQuery TinyValidate plugin
- * @desc A (Relatively) Tiny jQuery Validation Plugin
- * @version 1.4  (April 8, 2010)
- * @requires jQuery v1.3+
- * @author Karl Swedberg
+/*!
+ * jQuery TinyValidate plugin v1.4
  *
- * Dual licensed under the MIT and GPL licenses:
+ * Date: Mon Oct 4 16:39:35 2010 -0400
+ * Requires: jQuery v1.3+
+ *
+ * Copyright 2010, Karl Swedberg
+ * Dual licensed under the MIT and GPL licenses (just like jQuery):
  * http://www.opensource.org/licenses/mit-license.php
  * http://www.gnu.org/licenses/gpl.html
  *
- */
-
+ * A (relatively) tiny validation plugin
+ *
+ *
+*/
 (function($) {
 
 $.tinyvalidate = {
@@ -209,7 +211,7 @@ $.fn.tinyvalidate = function(options) {
       }
       for (var i = evts.length - 1; i >= 0; i--){
         $allFields.bind(evts[i] + '.tv', function(event) {
-          if (event.type == 'click' && !/(radio|checkbox)/i.test(event.target.type)) {return;}
+          if (event.type == 'click' && !(/^(?:radio|checkbox)$/i).test(event.target.type)) {return;}
           $(this).trigger('validate');
         });
       }
