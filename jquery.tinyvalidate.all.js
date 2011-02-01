@@ -1,7 +1,7 @@
 /*!
  * jQuery TinyValidate plugin v1.4
  *
- * Date: Sun Oct 31 23:09:52 2010 -0400
+ * Date: Tue Feb 01 14:01:30 2011 EST
  * Requires: jQuery v1.3+
  *
  * Copyright 2010, Karl Swedberg
@@ -119,7 +119,7 @@ $.fn.tinyvalidate = function(options) {
       .bind('toggleErrorClass', function(event) {
         var $thisField = $(this);
 
-        var $thisContainer = ($thisField.find(':checkbox, :radio').length) ? $thisField : $thisField.parents(inline.containerTag + ':first');
+        var $thisContainer = ($thisField.find('input[type="checkbox"], input[type="radio"]').length) ? $thisField : $thisField.closest(inline.containerTag);
         if (!!$thisField.data('error')) {
           $thisContainer.addClass(inline.containerErrorClass);
         } else {
@@ -419,7 +419,7 @@ $.tinyvalidate.rules.equals = {
   ruleClass: 'equals',
   rule: function(el) {
     var previousValue = false;
-    $(el).parents('form:first').find('[name=' + el[0].name + ']')
+    $(el).closest('form').find('[name="' + el[0].name + '"]')
     .each(function(index) {
       if (index && this.value !== previousValue) {
         previousValue = false;

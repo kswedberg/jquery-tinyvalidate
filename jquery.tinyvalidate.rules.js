@@ -106,7 +106,7 @@ $.tinyvalidate.rules.equals = {
   ruleClass: 'equals',
   rule: function(el) {
     var previousValue = false;
-    $(el).parents('form:first').find('[name=' + el[0].name + ']')
+    $(el).closest('form').find('[name="' + el[0].name + '"]')
     .each(function(index) {
       if (index && this.value !== previousValue) {
         previousValue = false;
