@@ -1,7 +1,7 @@
 /*!
  * jQuery TinyValidate plugin v1.4
  *
- * Date: Tue Feb 01 14:01:30 2011 EST
+ * Date: Wed Mar 09 14:37:21 2011 EST
  * Requires: jQuery v1.3+
  *
  * Copyright 2010, Karl Swedberg
@@ -77,11 +77,19 @@ $.fn.tinyvalidate = function(options) {
 
     // initialize: loop through elements with class that matches each rule's class
     $.each(rules, function(ruleName, ruleInfo) {
-      $('.' + ruleInfo.ruleClass, $form).each(function() {
-        var $field = $(this);
-        var thisRule = $field.data('rule') || [];
+      var ruleSelector = '.' + ruleInfo.ruleClass;
+      $form.find(ruleSelector).each(function() {
+        var elType = setElementType(this.nodeName) || 'inputs',
+            $field = $(this),
+            thisRule = $field.data('rule') || [];
+
+        // skip the rule if it's on a div that wraps an input with same class
+        if ( this.nodeName === 'DIV' && $field.has(ruleSelector) ) {
+          return;
+        }
+        // otherwise, add it to the list
         thisRule.push(rules[ruleName]);
-        var elType = setElementType(this.nodeName) || 'inputs';
+
         $field
         .data('rule', thisRule)
         .data('ruleName', ruleName)
@@ -337,7 +345,7 @@ $.tinyvalidate.rules.email = {
 $.tinyvalidate.rules.url = {
   ruleClass: 'url',
   rule: function(r) {
-    return (/^http(s?)\/\/:/).test(r);
+    return (/^(?:https?:\/\/)?.+\.\w{2,5}/).test(r) || r == '';
   },
   text: 'Invalid URL Format',
   check: 'value'
@@ -346,7 +354,7 @@ $.tinyvalidate.rules.url = {
 $.tinyvalidate.rules.zip = {
   ruleClass: 'zip',
   rule: function(r) {
-    return (/^\d{5}(-\d{4})?$/).test(r);
+    return (/^\d{5}(-\d{4})?$/).test(r) || r == '';
   },
   text: 'Invalid Zip Code Format',
   check: 'value'
@@ -356,7 +364,7 @@ $.tinyvalidate.rules.date = {
   ruleClass: 'date',
   rule: function(r) {
     // var thisYear = new Date().getFullYear();
-    return (/(0\d|1[0-2])\/([0-2]\d|3[0-1])\/[1-2]\d{3}/).test(r);
+    return (/(0\d|1[0-2])\/([0-2]\d|3[0-1])\/[1-2]\d{3}/).test(r) || r == '';
     // && (+r.slice(-4) < +thisYear-10);
   },
   text: 'Invalid Date Format',
@@ -376,7 +384,7 @@ $.tinyvalidate.rules.phone = {
 $.tinyvalidate.rules.ssn = {
   ruleClass: 'ssn',
   rule: function(r) {
-    return (/\d{3}-\d{2}-\d{4}/).test(r);
+    return (/\d{3}-\d{2}-\d{4}/).test(r) || r == '';
   },
   text: 'Invalid Format (xxx-xx-xxxx)',
   check: 'value'
@@ -395,7 +403,7 @@ $.tinyvalidate.rules.requiredradio = {
   ruleClass: 'choose-one',
   rule: function(el) {
     if (el.constructor == Object) {
-      return el.find(':checked').length;
+      return el.find('input:checked').length;
     }
   },
   text: 'At least one option is required',
@@ -418,18 +426,19 @@ $.tinyvalidate.rules.maxradio = {
 $.tinyvalidate.rules.equals = {
   ruleClass: 'equals',
   rule: function(el) {
-    var previousValue = false;
+    var previousValue = '';
     $(el).closest('form').find('[name="' + el[0].name + '"]')
     .each(function(index) {
+
       if (index && this.value !== previousValue) {
-        previousValue = false;
-        return false;
+         previousValue = false;
+         return false;
       }
       previousValue = this.value;
     });
-    return previousValue === false ? false : true;
+    return !previousValue ? false : true;
   },
-  text: 'These fields must match',
+  text: 'Values must match',
   check: 'element'
 };
 
