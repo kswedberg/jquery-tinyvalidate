@@ -24,7 +24,7 @@ $.tinyvalidate.rules.email = {
 $.tinyvalidate.rules.url = {
   ruleClass: 'url',
   rule: function(r) {
-    return (/^http(s?)\/\/:/).test(r);
+    return (/^(?:https?:\/\/)?.+\.\w{2,5}/).test(r) || r == '';
   },
   text: 'Invalid URL Format',
   check: 'value'
@@ -33,7 +33,7 @@ $.tinyvalidate.rules.url = {
 $.tinyvalidate.rules.zip = {
   ruleClass: 'zip',
   rule: function(r) {
-    return (/^\d{5}(-\d{4})?$/).test(r);
+    return (/^\d{5}(-\d{4})?$/).test(r) || r == '';
   },
   text: 'Invalid Zip Code Format',
   check: 'value'
@@ -43,7 +43,7 @@ $.tinyvalidate.rules.date = {
   ruleClass: 'date',
   rule: function(r) {
     // var thisYear = new Date().getFullYear();
-    return (/(0\d|1[0-2])\/([0-2]\d|3[0-1])\/[1-2]\d{3}/).test(r);
+    return (/(0\d|1[0-2])\/([0-2]\d|3[0-1])\/[1-2]\d{3}/).test(r) || r == '';
     // && (+r.slice(-4) < +thisYear-10);
   },
   text: 'Invalid Date Format',
@@ -63,7 +63,7 @@ $.tinyvalidate.rules.phone = {
 $.tinyvalidate.rules.ssn = {
   ruleClass: 'ssn',
   rule: function(r) {
-    return (/\d{3}-\d{2}-\d{4}/).test(r);
+    return (/\d{3}-\d{2}-\d{4}/).test(r) || r == '';
   },
   text: 'Invalid Format (xxx-xx-xxxx)',
   check: 'value'
@@ -82,7 +82,7 @@ $.tinyvalidate.rules.requiredradio = {
   ruleClass: 'choose-one',
   rule: function(el) {
     if (el.constructor == Object) {
-      return el.find(':checked').length;
+      return el.find('input:checked').length;
     }
   },
   text: 'At least one option is required',
@@ -105,18 +105,19 @@ $.tinyvalidate.rules.maxradio = {
 $.tinyvalidate.rules.equals = {
   ruleClass: 'equals',
   rule: function(el) {
-    var previousValue = false;
+    var previousValue = '';
     $(el).closest('form').find('[name="' + el[0].name + '"]')
     .each(function(index) {
+
       if (index && this.value !== previousValue) {
-        previousValue = false;
-        return false;
+         previousValue = false;
+         return false;
       }
       previousValue = this.value;
     });
-    return previousValue === false ? false : true;
+    return !previousValue ? false : true;
   },
-  text: 'These fields must match',
+  text: 'Values must match',
   check: 'element'
 };
 
