@@ -1,7 +1,7 @@
 /*!
- * jQuery TinyValidate plugin v1.4
+ * jQuery TinyValidate plugin v1.5
  *
- * Date: Wed Mar 09 14:37:21 2011 EST
+ * Date: Mon Jun 20 09:55:31 2011 EDT
  * Requires: jQuery v1.3+
  *
  * Copyright 2010, Karl Swedberg
@@ -35,6 +35,7 @@ $.fn.tinyvalidate = function(options) {
     return log('you must have at least one rule. see jquery.tinyvalidate.rules.js', 'alert');
   }
 
+  this.find('*[required]').addClass('required');
   return this.each(function(index) {
     var $form = $(this),
         $allFields = $([]);
@@ -268,26 +269,9 @@ $.fn.tinyvalidate.defaults.summary = {
 /** PRIVATE safeguards for inline insertion in case plugin user chooses wrong insertion type
     feel free to ignore this part.
 ************************************************************/
-$.extend(ins.inputs, {
-  append: 'insertAfter',
-  appendTo: 'insertAfter',
-  after: 'insertAfter',
-  insertAfter: 'insertAfter',
-  prepend: 'insertBefore',
-  prependTo: 'insertBefore',
-  before: 'insertBefore',
-  insertBefore: 'insertBefore'
-});
-$.extend(ins.containers, {
-  append: 'appendTo',
-  appendTo: 'appendTo',
-  after: 'appendTo',
-  insertAfter: 'appendTo',
-  prepend: 'prependTo',
-  prependTo: 'prependTo',
-  before: 'insertBefore',
-  insertBefore: 'insertBefore'
-});
+var insertionMap = { append: 'insertAfter', appendTo: 'insertAfter', after: 'insertAfter', insertAfter: 'insertAfter', prepend: 'insertBefore', prependTo: 'insertBefore', before: 'insertBefore', insertBefore: 'insertBefore' };
+$.extend(ins.inputs, insertionMap);
+$.extend(ins.containers, insertionMap);
 
 /* other private functions */
 function setElementType(tag) {
