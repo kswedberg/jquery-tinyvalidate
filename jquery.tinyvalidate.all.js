@@ -1,7 +1,7 @@
 /*!
- * jQuery TinyValidate plugin v1.5
+ * jQuery TinyValidate plugin v1.5.1
  *
- * Date: Mon Jun 20 09:55:31 2011 EDT
+ * Date: Mon Jun 20 10:24:31 2011 EDT
  * Requires: jQuery v1.3+
  *
  * Copyright 2010, Karl Swedberg
@@ -14,6 +14,10 @@
  *
 */
 (function($) {
+var inp = document.createElement('input');
+$.each(['required', 'pattern'], function(index, attr) {
+  $.support[attr] = (attr in inp);
+});
 
 $.tinyvalidate = {
   version: '1.4',
@@ -51,7 +55,7 @@ $.fn.tinyvalidate = function(options) {
     // immediately removes all error class and notices from the form
     if (options == 'removeErrors') {
       $.each(rules, function(ruleName, ruleInfo) {
-        $('.' + ruleInfo.ruleClass, $form).each(function() {
+        $form.find('.' + ruleInfo.ruleClass).each(function() {
           $allFields = $allFields.add($(this));
         });
       });
@@ -82,15 +86,27 @@ $.fn.tinyvalidate = function(options) {
       $form.find(ruleSelector).each(function() {
         var elType = setElementType(this.nodeName) || 'inputs',
             $field = $(this),
-            thisRule = $field.data('rule') || [];
+            thisRule = $field.data('rule') || [],
+            tmpRule = rules[ruleName],
+            pattern = this.pattern;
 
+        if (pattern) {
+          tmpRule = $.extend({}, tmpRule, {
+            rule: function(r) {
+              var re = new RegExp(pattern);
+              return re.test(r);
+            },
+            text: 'Field value is invalid.'
+          });
+        }
         // skip the rule if it's on a div that wraps an input with same class
         if ( this.nodeName === 'DIV' && $field.has(ruleSelector) ) {
           return;
         }
-        // otherwise, add it to the list
-        thisRule.push(rules[ruleName]);
 
+
+        // otherwise, add it to the list
+        thisRule.push(tmpRule);
         $field
         .data('rule', thisRule)
         .data('ruleName', ruleName)
