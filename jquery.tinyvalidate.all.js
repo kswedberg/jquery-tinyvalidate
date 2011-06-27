@@ -1,7 +1,7 @@
 /*!
- * jQuery TinyValidate plugin v1.5.1
+ * jQuery TinyValidate plugin v1.5.2
  *
- * Date: Mon Jun 27 11:37:41 2011 EDT
+ * Date: Mon Jun 27 12:16:24 2011 EDT
  * Requires: jQuery v1.3+
  *
  * Copyright 2010, Karl Swedberg
@@ -20,7 +20,7 @@ $.each(['required', 'pattern'], function(index, attr) {
 });
 
 $.tinyvalidate = {
-  version: '1.4',
+  version: '1.5.2',
   callCounter: -1,
   maxnum: 0,
   rules: {}
@@ -134,7 +134,7 @@ $.fn.tinyvalidate = function(options) {
         .bind('addNotice', function(event, num) {
 
             var $thisField = $(this),
-                ruleText = $.isFunction($thisField.data('rule')[num].text) ? $thisField.data('rule')[num].text.call(this) : $thisField.data('rule')[num].text;
+                ruleText = $.isFunction($thisField.data('rule')[num].text) ? $thisField.data('rule')[num].text.call(this, 'inline', $thisField) : $thisField.data('rule')[num].text;
 
             var $thisNotice = $(inline.errorElement);
             $thisNotice.html(ruleText);
