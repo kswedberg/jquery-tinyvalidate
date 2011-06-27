@@ -39,7 +39,16 @@ $.fn.tinyvalidate = function(options) {
     return log('you must have at least one rule. see jquery.tinyvalidate.rules.js', 'alert');
   }
 
-  this.find('*[required]').addClass('required');
+
+  var requireds = this.find('*[required]').addClass('required');
+  if ( $.support.required) {
+    if (typeof $.fn.prop == 'undefined') {
+      requireds.removeAttr('required');
+    } else {
+      requireds.prop('required', false);
+    }
+  }
+
   return this.each(function(index) {
     var $form = $(this),
         $allFields = $([]);
