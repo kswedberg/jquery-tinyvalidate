@@ -1,7 +1,7 @@
 /*!
  * jQuery TinyValidate plugin v1.5.1
  *
- * Date: Mon Jun 20 10:24:31 2011 EDT
+ * Date: Mon Jun 27 11:37:41 2011 EDT
  * Requires: jQuery v1.3+
  *
  * Copyright 2010, Karl Swedberg
@@ -39,7 +39,16 @@ $.fn.tinyvalidate = function(options) {
     return log('you must have at least one rule. see jquery.tinyvalidate.rules.js', 'alert');
   }
 
-  this.find('*[required]').addClass('required');
+
+  var requireds = this.find('*[required]').addClass('required');
+  if ( $.support.required) {
+    if (typeof $.fn.prop == 'undefined') {
+      requireds.removeAttr('required');
+    } else {
+      requireds.prop('required', false);
+    }
+  }
+
   return this.each(function(index) {
     var $form = $(this),
         $allFields = $([]);
