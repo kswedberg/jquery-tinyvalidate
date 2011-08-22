@@ -1,10 +1,10 @@
 /*!
- * jQuery TinyValidate plugin v1.5.2
+ * jQuery TinyValidate plugin v1.6
  *
- * Date: Mon Jun 27 12:16:24 2011 EDT
- * Requires: jQuery v1.3+
+ * Date: Mon Aug 22 11:06:26 2011 EDT
+ * Requires: jQuery v1.4+
  *
- * Copyright 2010, Karl Swedberg
+ * Copyright 2011, Karl Swedberg
  * Dual licensed under the MIT and GPL licenses (just like jQuery):
  * http://www.opensource.org/licenses/mit-license.php
  * http://www.gnu.org/licenses/gpl.html
@@ -51,15 +51,20 @@ $.fn.tinyvalidate = function(options) {
 
   return this.each(function(index) {
     var $form = $(this),
-        $allFields = $([]);
-    idSuffix += (index ? '-' + index : '');
+        $allFields = $([]),
 
-    // merge defaults, per-call options, and per-selector (form) options
-    var opts = $.extend(true, {}, $.fn.tinyvalidate.defaults, options || {}, $.metadata ? $form.metadata() : $.meta ? $form.data() : {});
-    var summaryItems = [],
+        // merge defaults, per-call options, and per-selector (form) options
+        opts = $.extend(true, {}, $.fn.tinyvalidate.defaults, options || {}, $.metadata ? $form.metadata() : $.meta ? $form.data() : {}),
+        summaryItems = [],
         errorCount = 0,
-        inline = opts.inline;
+        summary = opts.summary,
+        $errorSummary = summary && $(summary.wrapper).hide(),
+        inline = opts.inline,
+        evts = (typeof opts.otherEvents == 'string') ?
+                opts.otherEvents.split(/\s*,\s*/) :
+                opts.otherEvents || [];
 
+    idSuffix += (index ? '-' + index : '');
     // special case: $('someform').tinyvalidate('removeErrors')
     // immediately removes all error class and notices from the form
     if (options == 'removeErrors') {
@@ -77,9 +82,7 @@ $.fn.tinyvalidate = function(options) {
     }
 
     //set up summary
-    if (opts.summary) {
-      var summary = opts.summary,
-          $errorSummary = $(summary.wrapper).hide();
+    if (summary) {
       $(summary.insertTo == 'form' ? $form[0] : summary.insertTo)[summary.insertType]($errorSummary);
 
       if (summary.lineItems) {
@@ -168,9 +171,9 @@ $.fn.tinyvalidate = function(options) {
         if (errors) {
           var preMessage = summary.preMessage.replace(/\{num\}/g, errors);
           preMessage = pluralize(preMessage, errors);
-          var fullSummary = summary.lineItems
-              ? preMessage +  itemWrapperSplitTag[0] + summaryItems.join(lineItemDivider) + itemWrapperSplitTag[1] + summary.postMessage
-              : preMessage + summary.postMessage;
+          var fullSummary = summary.lineItems ?
+               preMessage +  itemWrapperSplitTag[0] + summaryItems.join(lineItemDivider) + itemWrapperSplitTag[1] + summary.postMessage :
+              preMessage + summary.postMessage;
           $errorSummary.html(fullSummary)
           [summary.messageAnimate.effect](summary.messageAnimate.speed);
         }
@@ -184,9 +187,9 @@ $.fn.tinyvalidate = function(options) {
         $form.bind('lineItemBuilder', function(event, field, therule) {
           var $field = $(field);
           var $fieldLabel = $('<div></div>').html(
-            $field.data('elementType') == 'containers'
-              ? $field.children(':first').html()
-              : $field.prev().clone().html()
+            $field.data('elementType') == 'containers' ?
+              $field.children(':first').html() :
+              $field.prev().clone().html()
           );
           $fieldLabel.children().remove();
           var fieldLabel = $fieldLabel.text().replace(/[\*:\s]+$/,''),
@@ -202,7 +205,7 @@ $.fn.tinyvalidate = function(options) {
 
     }
 
-    $allFields.bind('validate', function(event) {
+    $allFields.bind('validate.tv', function(event) {
       var thisField = this,
           $thisField = $(this).trigger('removeNotice');
 
@@ -225,12 +228,13 @@ $.fn.tinyvalidate = function(options) {
 
     // bind to user interactions
 
-    $form.bind('submit.tv', function() {
+    $form.bind('submit.tv', function(event) {
       errorCount = 0;
       summaryItems = [];
-      $allFields.trigger('validate');
+      $allFields.trigger('validate.tv');
       $form.trigger('displaySummary', [errorCount]);
       if (errorCount) {
+        opts.submitError.call($form[0], errorCount);
         return false;
       } else if (opts.submitOverride) {
         $form.tinyvalidate('removeErrors');
@@ -239,17 +243,14 @@ $.fn.tinyvalidate = function(options) {
       }
     });
 
-    if (opts.otherEvents) {
-      if (typeof opts.otherEvents == 'string') {
-        var evts = opts.otherEvents.split(/\s*,\s*/);
-      }
-      for (var i = evts.length - 1; i >= 0; i--){
-        $allFields.bind(evts[i] + '.tv', function(event) {
-          if (event.type == 'click' && !(/^(?:radio|checkbox)$/i).test(event.target.type)) {return;}
-          $(this).trigger('validate');
-        });
-      }
-    }
+    $.each(evts, function(index, evt) {
+      $allFields.bind(evt + '.tv', function(event) {
+        if (event.type == 'click' && !(/^(?:radio|checkbox)$/i).test(event.target.type)) {return;}
+        errorCount = 0;
+        $(this).trigger('validate.tv');
+      });
+    });
+
   }); //end return this.each
 }; // end $.fn.tinyvalidate
 
@@ -258,9 +259,16 @@ $.fn.tinyvalidate = function(options) {
 ************************************************************/
 $.fn.tinyvalidate.defaults = {
   otherEvents: 'blur',
-  submitOverride: null  // if you want to override submit when no validation errors,
-                        // use an anonymous function:
-                        // function() { /* do something */ }
+
+  // called after tinyvalidate's error handling
+  // `this` is the form element
+  // takes one argument: errorCount (the number of errors found)
+  submitError: function() {},
+
+  // if you want to override submit when no validation errors,
+  // use an anonymous function:
+  // function() { /* do something */ }
+  submitOverride: null
 };
 
 $.fn.tinyvalidate.defaults.inline = {
