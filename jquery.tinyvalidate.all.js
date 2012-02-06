@@ -1,7 +1,7 @@
 /*!
  * jQuery TinyValidate plugin v1.6
  *
- * Date: Mon Aug 22 11:06:26 2011 EDT
+ * Date: Mon Feb 06 16:16:11 2012 EST
  * Requires: jQuery v1.4+
  *
  * Copyright 2011, Karl Swedberg
@@ -20,7 +20,7 @@ $.each(['required', 'pattern'], function(index, attr) {
 });
 
 $.tinyvalidate = {
-  version: '1.5.2',
+  version: '1.6',
   callCounter: -1,
   maxnum: 0,
   rules: {}
@@ -28,6 +28,8 @@ $.tinyvalidate = {
 var ins = {};
 ins.inputs = {};
 ins.containers = {};
+
+$.fn.removeAttrProp = $.fn.removeProp || $.fn.removeAttr;
 
 $.fn.tinyvalidate = function(options) {
   var errorCount = 0;
@@ -40,14 +42,7 @@ $.fn.tinyvalidate = function(options) {
   }
 
 
-  var requireds = this.find('*[required]').addClass('required');
-  if ( $.support.required) {
-    if (typeof $.fn.prop == 'undefined') {
-      requireds.removeAttr('required');
-    } else {
-      requireds.prop('required', false);
-    }
-  }
+  var requireds = this.find('*[required]').addClass('required').removeAttrProp('required');
 
   return this.each(function(index) {
     var $form = $(this),
@@ -154,9 +149,16 @@ $.fn.tinyvalidate = function(options) {
 
       $allFields
       .bind('toggleErrorClass', function(event) {
-        var $thisField = $(this);
+        var $thisContainer, $selectContainer,
+            $thisField = $(this);
 
-        var $thisContainer = ($thisField.find('input[type="checkbox"], input[type="radio"]').length) ? $thisField : $thisField.closest(inline.containerTag);
+        $selectContainer = $thisField.is('select') && $thisField.closest('div.select');
+
+        if ($selectContainer && $selectContainer.length) {
+          $thisContainer = $selectContainer;
+        } else {
+          $thisContainer = ($thisField.find('input[type="checkbox"], input[type="radio"]').length) ? $thisField : $thisField.closest(inline.containerTag);
+        }
         if (!!$thisField.data('error')) {
           $thisContainer.addClass(inline.containerErrorClass);
         } else {
@@ -188,7 +190,7 @@ $.fn.tinyvalidate = function(options) {
           var $field = $(field);
           var $fieldLabel = $('<div></div>').html(
             $field.data('elementType') == 'containers' ?
-              $field.children(':first').html() :
+              $field.children().eq(0).html() :
               $field.prev().clone().html()
           );
           $fieldLabel.children().remove();
