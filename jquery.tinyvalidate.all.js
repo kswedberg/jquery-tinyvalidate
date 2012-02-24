@@ -1,7 +1,7 @@
 /*!
- * jQuery TinyValidate plugin v1.6
+ * jQuery TinyValidate plugin v1.6.1
  *
- * Date: Mon Feb 06 16:16:11 2012 EST
+ * Date: Fri Feb 24 13:36:34 2012 EST
  * Requires: jQuery v1.4+
  *
  * Copyright 2011, Karl Swedberg
@@ -20,7 +20,7 @@ $.each(['required', 'pattern'], function(index, attr) {
 });
 
 $.tinyvalidate = {
-  version: '1.6',
+  version: '1.6.1',
   callCounter: -1,
   maxnum: 0,
   rules: {}
@@ -107,7 +107,7 @@ $.fn.tinyvalidate = function(options) {
           });
         }
         // skip the rule if it's on a div that wraps an input with same class
-        if ( this.nodeName === 'DIV' && $field.has(ruleSelector) ) {
+        if ( this.nodeName === 'DIV' && $field.has(ruleSelector).length ) {
           return;
         }
 
@@ -214,7 +214,9 @@ $.fn.tinyvalidate = function(options) {
       var thisRule = $thisField.data('rule'), trl = thisRule.length;
       $thisField.removeData('error');
       for (var i=0; i < trl; i++) {
-        thisRule[i].elem && thisRule[i].elem($thisField);
+        if ( thisRule[i].elem ) {
+          thisRule[i].elem($thisField);
+        }
         var arg = thisRule[i].check == 'element' ? $thisField : $thisField.val();
         if (!thisRule[i].rule(arg) && !$thisField.is(':hidden')) {
           if ($thisField.is('.required') && thisRule[i].ruleClass != 'required' && !$thisField.val()) {continue;}
