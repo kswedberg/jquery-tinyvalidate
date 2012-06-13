@@ -1,7 +1,7 @@
 /*!
  * jQuery TinyValidate plugin v1.6.1
  *
- * Date: Fri Feb 24 13:36:34 2012 EST
+ * Date: Wed Jun 13 09:32:32 2012 EDT
  * Requires: jQuery v1.4+
  *
  * Copyright 2011, Karl Swedberg
@@ -306,9 +306,9 @@ $.fn.tinyvalidate.defaults.summary = {
 /** PRIVATE safeguards for inline insertion in case plugin user chooses wrong insertion type
     feel free to ignore this part.
 ************************************************************/
-var insertionMap = { append: 'insertAfter', appendTo: 'insertAfter', after: 'insertAfter', insertAfter: 'insertAfter', prepend: 'insertBefore', prependTo: 'insertBefore', before: 'insertBefore', insertBefore: 'insertBefore' };
-$.extend(ins.inputs, insertionMap);
-$.extend(ins.containers, insertionMap);
+var insertionMap = { after: 'insertAfter', insertAfter: 'insertAfter', before: 'insertBefore', insertBefore: 'insertBefore' };
+$.extend(ins.inputs, insertionMap, { append: 'insertAfter', appendTo: 'insertAfter', prepend: 'insertBefore', prependTo: 'insertBefore' });
+$.extend(ins.containers, insertionMap, { append: 'appendTo', appendTo: 'appendTo', prepend: 'prependTo', prependTo: 'prependTo' });
 
 /* other private functions */
 function setElementType(tag) {
