@@ -1,7 +1,7 @@
 /*!
  * jQuery TinyValidate plugin v1.6.2
  *
- * Date: December 10, 2012
+ * Date: Mon Dec 10 13:20:56 2012 EST
  * Requires: jQuery v1.4+
  *
  * Copyright 2011, Karl Swedberg
