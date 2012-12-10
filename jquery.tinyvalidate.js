@@ -1,7 +1,7 @@
 /*!
- * jQuery TinyValidate plugin v1.6.1
+ * jQuery TinyValidate plugin v1.6.2
  *
- * Date: Wed Jun 13 09:32:32 2012 EDT
+ * Date: December 10, 2012
  * Requires: jQuery v1.4+
  *
  * Copyright 2011, Karl Swedberg
@@ -13,14 +13,16 @@
  *
  *
 */
+
 (function($) {
+'use strict';
 var inp = document.createElement('input');
 $.each(['required', 'pattern'], function(index, attr) {
   $.support[attr] = (attr in inp);
 });
 
 $.tinyvalidate = {
-  version: '1.6.1',
+  version: '1.6.2',
   callCounter: -1,
   maxnum: 0,
   rules: {}
@@ -55,14 +57,14 @@ $.fn.tinyvalidate = function(options) {
         summary = opts.summary,
         $errorSummary = summary && $(summary.wrapper).hide(),
         inline = opts.inline,
-        evts = (typeof opts.otherEvents == 'string') ?
+        evts = (typeof opts.otherEvents === 'string') ?
                 opts.otherEvents.split(/\s*,\s*/) :
                 opts.otherEvents || [];
 
     idSuffix += (index ? '-' + index : '');
     // special case: $('someform').tinyvalidate('removeErrors')
     // immediately removes all error class and notices from the form
-    if (options == 'removeErrors') {
+    if (options === 'removeErrors') {
       $.each(rules, function(ruleName, ruleInfo) {
         $form.find('.' + ruleInfo.ruleClass).each(function() {
           $allFields = $allFields.add($(this));
@@ -78,7 +80,7 @@ $.fn.tinyvalidate = function(options) {
 
     //set up summary
     if (summary) {
-      $(summary.insertTo == 'form' ? $form[0] : summary.insertTo)[summary.insertType]($errorSummary);
+      $(summary.insertTo === 'form' ? $form[0] : summary.insertTo)[summary.insertType]($errorSummary);
 
       if (summary.lineItems) {
         var itemWrapperSplitTag = splitTag(summary.lineItems.wrapper),
@@ -189,7 +191,7 @@ $.fn.tinyvalidate = function(options) {
         $form.bind('lineItemBuilder', function(event, field, therule) {
           var $field = $(field);
           var $fieldLabel = $('<div></div>').html(
-            $field.data('elementType') == 'containers' ?
+            $field.data('elementType') === 'containers' ?
               $field.children().eq(0).html() :
               $field.prev().clone().html()
           );
@@ -198,7 +200,7 @@ $.fn.tinyvalidate = function(options) {
               ruleText = $.isFunction(therule.text) ? therule.text.call(this) : therule.text;
 
           if (summary.lineItems.linkify) {
-            fieldLabel = '<a href="#' + ($field.data('elementType') == 'containers' ? $field.find('input')[0].id : field.id) + '">' + fieldLabel + '</a>';
+            fieldLabel = '<a href="#' + ($field.data('elementType') === 'containers' ? $field.find('input')[0].id : field.id) + '">' + fieldLabel + '</a>';
           }
 
           summaryItems.push(fieldLabel + ' ' + itemErrorSplitTag[0] + ruleText + itemErrorSplitTag[1]);
@@ -217,9 +219,9 @@ $.fn.tinyvalidate = function(options) {
         if ( thisRule[i].elem ) {
           thisRule[i].elem($thisField);
         }
-        var arg = thisRule[i].check == 'element' ? $thisField : $thisField.val();
+        var arg = thisRule[i].check === 'element' ? $thisField : $thisField.val();
         if (!thisRule[i].rule(arg) && !$thisField.is(':hidden')) {
-          if ($thisField.is('.required') && thisRule[i].ruleClass != 'required' && !$thisField.val()) {continue;}
+          if ($thisField.is('.required') && thisRule[i].ruleClass !== 'required' && !$thisField.val()) {continue;}
           $thisField
           .data('error', 'true')
           .trigger('addNotice', [i]);
@@ -263,7 +265,7 @@ $.fn.tinyvalidate = function(options) {
 ************************************************************/
 $.fn.tinyvalidate.defaults = {
   otherEvents: 'blur',
-
+  onEvents: $.noop,
   // called after tinyvalidate's error handling
   // `this` is the form element
   // takes one argument: errorCount (the number of errors found)
@@ -336,7 +338,7 @@ function log() {
 }
 function pluralize(word, number) {
   return word.replace(/\{([^\|]+)\|([^}]+)\}/g, function(fullmatch, singular, plural) {
-    return (number*1 == 1) ? singular : plural;
+    return (number*1 === 1) ? singular : plural;
   });
 }
 })(jQuery);
