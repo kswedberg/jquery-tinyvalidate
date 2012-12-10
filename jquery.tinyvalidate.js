@@ -251,9 +251,13 @@ $.fn.tinyvalidate = function(options) {
 
     $.each(evts, function(index, evt) {
       $allFields.bind(evt + '.tv', function(event) {
-        if (event.type == 'click' && !(/^(?:radio|checkbox)$/i).test(event.target.type)) {return;}
+        var ignoreKeys = [9, 16, 17, 18, 91];
+        if (event.type === 'click' && !(/^(?:radio|checkbox)$/i).test(event.target.type)) {return;}
+        if (event.type.indexOf('key') === 0 && $.inArray(event.which, ignoreKeys) > -1) {return;}
+
         errorCount = 0;
-        $(this).trigger('validate.tv');
+        $(this).trigger('validate.tv', [event]);
+        opts.onEvents.call(this, $form);
       });
     });
 
