@@ -31,8 +31,6 @@ var ins = {};
 ins.inputs = {};
 ins.containers = {};
 
-$.fn.removeAttrProp = $.fn.removeProp || $.fn.removeAttr;
-
 $.fn.tinyvalidate = function(options) {
   var errorCount = 0;
   $.tinyvalidate.callCounter++;
@@ -44,7 +42,7 @@ $.fn.tinyvalidate = function(options) {
   }
 
 
-  var requireds = this.find('*[required]').addClass('required').removeAttrProp('required');
+  var requireds = this.find('*[required]').addClass('required').prop({required: false});
 
   return this.each(function(index) {
     var $form = $(this),
