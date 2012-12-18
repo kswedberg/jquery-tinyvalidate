@@ -1,7 +1,7 @@
 /*!
- * jQuery TinyValidate plugin v1.6.2
+ * jQuery TinyValidate plugin v1.6.3
  *
- * Date: Mon Dec 10 13:20:56 2012 EST
+ * Date: Tue Dec 18 11:20:54 2012 EST
  * Requires: jQuery v1.4+
  *
  * Copyright 2011, Karl Swedberg
@@ -22,7 +22,7 @@ $.each(['required', 'pattern'], function(index, attr) {
 });
 
 $.tinyvalidate = {
-  version: '1.6.2',
+  version: '1.6.3',
   callCounter: -1,
   maxnum: 0,
   rules: {}
@@ -30,8 +30,6 @@ $.tinyvalidate = {
 var ins = {};
 ins.inputs = {};
 ins.containers = {};
-
-$.fn.removeAttrProp = $.fn.removeProp || $.fn.removeAttr;
 
 $.fn.tinyvalidate = function(options) {
   var errorCount = 0;
@@ -44,7 +42,7 @@ $.fn.tinyvalidate = function(options) {
   }
 
 
-  var requireds = this.find('*[required]').addClass('required').removeAttrProp('required');
+  var requireds = this.find('*[required]').addClass('required').prop({required: false});
 
   return this.each(function(index) {
     var $form = $(this),
@@ -220,7 +218,10 @@ $.fn.tinyvalidate = function(options) {
           thisRule[i].elem($thisField);
         }
         var arg = thisRule[i].check === 'element' ? $thisField : $thisField.val();
-        if (!thisRule[i].rule(arg) && !$thisField.is(':hidden')) {
+        if ( !thisRule[i].rule(arg) &&
+             ( !opts.ignoreHidden || !$thisField.is(':hidden') ) &&
+             ( !opts.ignoreDisabled || !thisField.disabled )
+        ) {
           if ($thisField.is('.required') && thisRule[i].ruleClass !== 'required' && !$thisField.val()) {continue;}
           $thisField
           .data('error', 'true')
@@ -268,7 +269,15 @@ $.fn.tinyvalidate = function(options) {
 ************************************************************
 ************************************************************/
 $.fn.tinyvalidate.defaults = {
+  // ignore disabled elements when validating
+  ignoreDisabled: true,
+  //ignore hidden elements when validating
+  ignoreHidden: true,
+  // events other than submit to trigger validation
+  // triggers validation only on the element receiving the action
   otherEvents: 'blur',
+  // called each time one of the events specified by the otherEvents option is triggered.
+  // `this` is the form element. Can take one argument, a jQuery object containing the form
   onEvents: $.noop,
   // called after tinyvalidate's error handling
   // `this` is the form element
@@ -280,6 +289,7 @@ $.fn.tinyvalidate.defaults = {
   // function() { /* do something */ }
   submitOverride: null
 };
+
 
 $.fn.tinyvalidate.defaults.inline = {
   insertType: 'after',
