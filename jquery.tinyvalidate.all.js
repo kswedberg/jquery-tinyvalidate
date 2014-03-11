@@ -1,7 +1,7 @@
 /*!
  * jQuery TinyValidate plugin v1.6.3
  *
- * Date: Tue Dec 18 11:20:54 2012 EST
+ * Date: Tue Mar 11 16:13:58 2014 EDT
  * Requires: jQuery v1.4+
  *
  * Copyright 2011, Karl Swedberg
@@ -373,7 +373,7 @@ $.tinyvalidate.rules.required = {
 $.tinyvalidate.rules.email = {
   ruleClass: 'email',
   rule: function(r) {
-    return (/^\S+[@]\w+(\.[a-zA-Z0-9]{2,4}){1,4}/).test(r) || r == '';
+    return (/^\S+[@]\w+(\.[a-zA-Z0-9]{2,4}){1,4}/).test(r) || r === '';
   },
   text: 'Invalid Email Format',
   check: 'value'
@@ -382,7 +382,7 @@ $.tinyvalidate.rules.email = {
 $.tinyvalidate.rules.url = {
   ruleClass: 'url',
   rule: function(r) {
-    return (/^(?:https?:\/\/)?.+\.\w{2,5}/).test(r) || r == '';
+    return (/^(?:https?:\/\/)?.+\.\w{2,5}/).test(r) || r === '';
   },
   text: 'Invalid URL Format',
   check: 'value'
@@ -391,7 +391,7 @@ $.tinyvalidate.rules.url = {
 $.tinyvalidate.rules.zip = {
   ruleClass: 'zip',
   rule: function(r) {
-    return (/^\d{5}(-\d{4})?$/).test(r) || r == '';
+    return (/^\d{5}(-\d{4})?$/).test(r) || r === '';
   },
   text: 'Invalid Zip Code Format',
   check: 'value'
@@ -401,7 +401,7 @@ $.tinyvalidate.rules.date = {
   ruleClass: 'date',
   rule: function(r) {
     // var thisYear = new Date().getFullYear();
-    return (/(0\d|1[0-2])\/([0-2]\d|3[0-1])\/[1-2]\d{3}/).test(r) || r == '';
+    return (/(0\d|1[0-2])\/([0-2]\d|3[0-1])\/[1-2]\d{3}/).test(r) || r === '';
     // && (+r.slice(-4) < +thisYear-10);
   },
   text: 'Invalid Date Format',
@@ -411,7 +411,7 @@ $.tinyvalidate.rules.date = {
 $.tinyvalidate.rules.phone = {
   ruleClass: 'phone',
   rule: function(r) {
-    return (/\(?\d{3}\)?[\. -]?\d{3}[\. -]?\d{4}/).test(r) || r == '';
+    return (/\(?\d{3}\)?[\. -]?\d{3}[\. -]?\d{4}/).test(r) || r === '';
   },
   text: 'Invalid Format ',
   check: 'value'
@@ -421,7 +421,7 @@ $.tinyvalidate.rules.phone = {
 $.tinyvalidate.rules.ssn = {
   ruleClass: 'ssn',
   rule: function(r) {
-    return (/\d{3}-\d{2}-\d{4}/).test(r) || r == '';
+    return (/\d{3}-\d{2}-\d{4}/).test(r) || r === '';
   },
   text: 'Invalid Format (xxx-xx-xxxx)',
   check: 'value'
@@ -430,7 +430,7 @@ $.tinyvalidate.rules.ssn = {
 $.tinyvalidate.rules.currency = {
   ruleClass: 'currency',
   rule: function(r) {
-    return (/^\d+(\.\d\d)?$/).test(r) || r == '';
+    return (/^\d+(\.\d\d)?$/).test(r) || r === '';
   },
   text: 'Invalid Currency Format',
   check: 'value'
@@ -439,7 +439,7 @@ $.tinyvalidate.rules.currency = {
 $.tinyvalidate.rules.requiredradio = {
   ruleClass: 'choose-one',
   rule: function(el) {
-    if (el.constructor == Object) {
+    if (typeof el === 'object') {
       return el.find('input:checked').length;
     }
   },
