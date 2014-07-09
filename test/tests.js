@@ -1,4 +1,4 @@
-
+/* globals test: false, equal: false  */
 module('defaults', {
   setup: function() {
     this.frm = $('form').eq(0);

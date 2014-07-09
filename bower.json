@@ -1,0 +1,27 @@
+{
+  "name": "jquery.tinyvalidate",
+  "version": "1.7.0",
+  "description": "jQuery Tiny Validate Plugin",
+  "dependencies": {
+    "jquery": ">=1.4"
+  },
+  "main": "jquery.tinyvalidate.all.js",
+  "ignore": [
+    "ajaxform/",
+    "extras/",
+    "test/",
+    "Gruntfile.js",
+    "package.json"
+  ],
+  "authors": [
+    {
+      "name": "Karl Swedberg",
+      "email": "kswedberg@gmail.com"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/kswedberg/jquery-tinyvalidate.git"
+  },
+  "license": "MIT"
+}

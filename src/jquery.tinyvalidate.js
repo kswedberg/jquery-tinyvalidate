@@ -1,7 +1,3 @@
-/*! jQuery Tiny Validate Plugin - v1.7.0 - 2014-07-09
-* A (relatively) tiny validation plugin
-* Copyright (c) 2014 Karl Swedberg; Licensed MIT
- */
 
 
 (function($) {
