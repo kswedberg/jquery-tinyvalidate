@@ -1,8 +1,7 @@
-/*! jQuery Tiny Validate Plugin - v1.7.0 - 2014-07-09
-* A (relatively) tiny validation plugin
-* Copyright (c) 2014 Karl Swedberg; Licensed MIT
+/*! jQuery Tiny Validate Plugin - v1.8.0 - 2015-09-08
+* 
+* Copyright (c) 2015 Karl Swedberg; Licensed MIT
  */
-
 
 (function($) {
   'use strict';
@@ -211,7 +210,9 @@
                ( !opts.ignoreHidden || !$thisField.is(':hidden') ) &&
                ( !opts.ignoreDisabled || !thisField.disabled )
           ) {
-            if ($thisField.is('.required') && thisRule[i].ruleClass !== 'required' && !$thisField.val()) {continue;}
+            if ($thisField.is('.required') && thisRule[i].ruleClass !== 'required' && !$thisField.val()) {
+              continue;
+            }
             $thisField
             .data('error', 'true')
             .trigger('addNotice', [i]);
@@ -225,6 +226,7 @@
       // bind to user interactions
 
       $form.bind('submit.tv', function() {
+        var ret;
         errorCount = 0;
         summaryItems = [];
         $allFields.trigger('validate.tv');
@@ -234,8 +236,12 @@
           return false;
         } else if (opts.submitOverride) {
           $form.tinyvalidate('removeErrors');
-          opts.submitOverride.call($form[0], opts);
-          return false;
+
+          // If nothing returned from submitOverride callback, we'll coerce it to Boolean false
+          // So default will be prevented (return false).
+          // Otherwise, form will continue its non-ajaxy submit
+          ret = !!opts.submitOverride.call($form[0], opts);
+          return ret;
         }
       });
 
@@ -371,7 +377,7 @@
   $.tinyvalidate.rules.email = {
     ruleClass: 'email',
     rule: function(r) {
-      return (/^\S+[@]\w+(\.[a-zA-Z0-9]{2,4}){1,4}/).test(r) || r === '';
+      return (/^\S+[@]\S+(\.[a-zA-Z0-9]+){1,4}/).test(r) || r === '';
     },
     text: 'Invalid Email Format',
     check: 'value'
@@ -380,7 +386,7 @@
   $.tinyvalidate.rules.url = {
     ruleClass: 'url',
     rule: function(r) {
-      return (/^(?:https?:\/\/)?.+\.\w{2,5}/).test(r) || r === '';
+      return (/^(?:https?:\/\/)?.+\.\w+/).test(r) || r === '';
     },
     text: 'Invalid URL Format',
     check: 'value'

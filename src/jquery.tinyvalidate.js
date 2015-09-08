@@ -1,5 +1,4 @@
 
-
 (function($) {
   'use strict';
   var inp = document.createElement('input');
@@ -207,7 +206,9 @@
                ( !opts.ignoreHidden || !$thisField.is(':hidden') ) &&
                ( !opts.ignoreDisabled || !thisField.disabled )
           ) {
-            if ($thisField.is('.required') && thisRule[i].ruleClass !== 'required' && !$thisField.val()) {continue;}
+            if ($thisField.is('.required') && thisRule[i].ruleClass !== 'required' && !$thisField.val()) {
+              continue;
+            }
             $thisField
             .data('error', 'true')
             .trigger('addNotice', [i]);
@@ -221,6 +222,7 @@
       // bind to user interactions
 
       $form.bind('submit.tv', function() {
+        var ret;
         errorCount = 0;
         summaryItems = [];
         $allFields.trigger('validate.tv');
@@ -230,8 +232,12 @@
           return false;
         } else if (opts.submitOverride) {
           $form.tinyvalidate('removeErrors');
-          opts.submitOverride.call($form[0], opts);
-          return false;
+
+          // If nothing returned from submitOverride callback, we'll coerce it to Boolean false
+          // So default will be prevented (return false).
+          // Otherwise, form will continue its non-ajaxy submit
+          ret = !!opts.submitOverride.call($form[0], opts);
+          return ret;
         }
       });
 

@@ -1,6 +1,6 @@
 {
   "name": "jquery.tinyvalidate",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "description": "jQuery Tiny Validate Plugin",
   "dependencies": {
     "jquery": ">=1.6"

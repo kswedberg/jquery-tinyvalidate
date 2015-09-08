@@ -1,8 +1,8 @@
 {
   "name": "jquery.tinyvalidate",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "title": "jQuery Tiny Validate Plugin",
-  "desc": "A (relatively) tiny validation plugin",
+  "description": "A (relatively) tiny validation plugin",
   "main": "jquery.tinyvalidate.all.js",
   "directories": {
     "test": "test"
