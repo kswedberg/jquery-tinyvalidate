@@ -15,7 +15,7 @@
   $.tinyvalidate.rules.email = {
     ruleClass: 'email',
     rule: function(r) {
-      return (/^\S+[@]\w+(\.[a-zA-Z0-9]{2,4}){1,4}/).test(r) || r === '';
+      return (/^\S+[@]\S+(\.[a-zA-Z0-9]+){1,4}/).test(r) || r === '';
     },
     text: 'Invalid Email Format',
     check: 'value'
@@ -24,7 +24,7 @@
   $.tinyvalidate.rules.url = {
     ruleClass: 'url',
     rule: function(r) {
-      return (/^(?:https?:\/\/)?.+\.\w{2,5}/).test(r) || r === '';
+      return (/^(?:https?:\/\/)?.+\.\w+/).test(r) || r === '';
     },
     text: 'Invalid URL Format',
     check: 'value'
