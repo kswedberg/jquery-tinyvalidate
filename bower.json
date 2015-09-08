@@ -3,7 +3,7 @@
   "version": "1.7.0",
   "description": "jQuery Tiny Validate Plugin",
   "dependencies": {
-    "jquery": ">=1.4"
+    "jquery": ">=1.6"
   },
   "main": "jquery.tinyvalidate.all.js",
   "ignore": [
