@@ -1,4 +1,4 @@
-/*! jQuery Tiny Validate Plugin - v1.8.0 - 2015-09-08
+/*! jQuery Tiny Validate Plugin - v1.8.0 - 2015-12-01
 * 
 * Copyright (c) 2015 Karl Swedberg; Licensed MIT
  */

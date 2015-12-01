@@ -58,9 +58,10 @@ $.fn.tinyvalidate.defaults.inline = {
 
 ```js
 $.fn.tinyvalidate.defaults.summary = {
-  // Determines where the summary message will display. 
+  // Determines where the summary message will display.
   // If default 'form' is used, will be the current form;
-  // otherwise, will simply use the string as a selector
+  // otherwise, if a string is used, will simply use the string as a selector
+  // If a function is used, will be the return value of the function. `this` is set to the form.
   insertTo: 'form',
   insertType: 'append',
   wrapper: '<div class="error-summary"></div>',
@@ -72,11 +73,11 @@ $.fn.tinyvalidate.defaults.summary = {
   },
 
   // set to null if you don't want to include details in the summary message:
-  lineItems: { 
+  lineItems: {
     wrapper: '<li></li>',
     errorElement: '<span class="error-message"></span>',
     // create link in summary details to inputs with errors
-    linkify: true 
+    linkify: true
   }
 };
 ```

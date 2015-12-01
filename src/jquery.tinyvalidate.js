@@ -64,6 +64,10 @@
 
       // set up summary
       if (summary) {
+        if (typeof summary.insertTo === 'function') {
+          summary.insertTo = summary.insertTo.call($form[0]);
+        }
+
         $(summary.insertTo === 'form' ? $form[0] : summary.insertTo)[summary.insertType]($errorSummary);
 
         if (summary.lineItems) {
