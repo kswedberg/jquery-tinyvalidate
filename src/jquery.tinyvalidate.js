@@ -19,15 +19,15 @@
   $.fn.tinyvalidate = function(options) {
     $.tinyvalidate.callCounter++;
     var idSuffix = $.tinyvalidate.callCounter ? '_' + $.tinyvalidate.callCounter : '';
-
     var rules = $.tinyvalidate.rules;
+    var requiredClass = rules.required && rules.required.ruleClass || 'required';
 
     if (isEmpty(rules)) {
       return log('you must have at least one rule. see jquery.tinyvalidate.rules.js', 'alert');
     }
 
     // Replace "required" attribute with "required" class
-    this.find('*[required]').addClass('required').prop({required: false});
+    this.find('*[required]').addClass(requiredClass).prop({required: false});
 
     return this.each(function(index) {
       var $form = $(this);
@@ -220,7 +220,7 @@
                (!opts.ignoreHidden || !$thisField.is(':hidden')) &&
                (!opts.ignoreDisabled || !thisField.disabled)
           ) {
-            if ($thisField.is('.required') && thisRule[i].ruleClass !== 'required' && !$thisField.val()) {
+            if ($thisField.is('.' + requiredClass) && thisRule[i].ruleClass !== requiredClass && !$thisField.val()) {
               continue;
             }
             $thisField
