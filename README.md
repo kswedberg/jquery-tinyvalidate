@@ -15,6 +15,9 @@ $.fn.tinyvalidate.defaults = {
   // Ignore hidden elements when validating
   ignoreHidden: true,
 
+  // For inputs that have a pattern attribute, use its value instead of the one in the rule set
+  usePattern: false,
+
   // Events other than submit to trigger validation
   // Triggers validation only on the element receiving the action
   otherEvents: 'blur',

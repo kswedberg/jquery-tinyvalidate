@@ -87,7 +87,7 @@
           var tmpRule = rules[ruleName];
           var pattern = this.pattern;
 
-          if (pattern) {
+          if (pattern && opts.usePattern) {
             tmpRule = $.extend({}, tmpRule, {
               rule: function(r) {
                 var re = new RegExp(pattern);
@@ -289,6 +289,9 @@
 
     // Ignore hidden elements when validating
     ignoreHidden: true,
+
+    // For inputs that have a pattern attribute, use its value instead of the one in the rule set
+    usePattern: false,
 
     // Events other than submit to trigger validation
     // Triggers validation only on the element receiving the action
