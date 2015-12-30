@@ -1,4 +1,4 @@
-/*! jQuery Tiny Validate Plugin - v1.11.0 - 2015-12-01
+/*! jQuery Tiny Validate Plugin - v1.12.0 - 2015-12-30
 * 
 * Copyright (c) 2015 Karl Swedberg; Licensed MIT
  */
@@ -10,7 +10,7 @@
   });
 
   $.tinyvalidate = {
-    version: '1.6.3',
+    version: '1.12.0',
     callCounter: -1,
     maxnum: 0,
     rules: {}
@@ -114,6 +114,12 @@
           $allFields = $allFields.add($field);
 
           if (inline) {
+            // If we're designating the insertion element, we should know what we're doing, so treat it as a container
+            // (meaning that we don't try to avoid append/prepend/etc.)
+            if (inline.insertTo) {
+              elType = 'containers';
+            }
+
             $field.data('insertion', ins[elType][inline.insertType]);
           }
         });
@@ -124,16 +130,21 @@
 
           $allFields
           .bind('addNotice', function(event, num) {
-
+            var insertTo = this;
             var $thisField = $(this);
             var ruleText = $.isFunction($thisField.data('rule')[num].text) ?
               $thisField.data('rule')[num].text.call(this, 'inline', $thisField) :
               $thisField.data('rule')[num].text;
 
             var $thisNotice = $(inline.errorElement);
+
+            if (inline.insertTo) {
+              insertTo = $.isFunction(inline.insertTo) ? inline.insertTo.call(this) : inline.insertTo;
+            }
+
             $thisNotice.html(ruleText);
             $thisNotice
-            [$(this).data('insertion')](this)
+            [$(this).data('insertion')](insertTo)
             .hide();
             $thisNotice[inline.errorAnimate.effect](inline.errorAnimate.speed);
 
@@ -317,6 +328,9 @@
 
   $.fn.tinyvalidate.defaults.inline = {
     insertType: 'after',
+    // If no insertTo specified, inserts relative to the inline element.
+    // Can be a selector or a function returning an element or jQuery object.
+    insertTo: null,
     errorElement: '<div class="error-message"></div>',
     errorAnimate: {
       effect: 'fadeIn',

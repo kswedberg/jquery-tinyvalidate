@@ -11,12 +11,6 @@
   }
 */
   </style>
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-
-  <script src="qunit/qunit.js"></script>
-  <script src="../jquery.tinyvalidate.js"></script>
-  <script src="../jquery.tinyvalidate.rules.js"></script>
-  <script src="tests.js"></script>
 </head>
 <body>
   <h1 id="qunit-header">Tests</h1>
@@ -86,48 +80,15 @@
           <a class="cancel" href="#">Cancel</a>
       </fieldset>
     </form>
-    <h3>Comment Form</h3>
-    <form class="full" action="" method="post">
-      <fieldset>
-        <div class="text">
-          <label for="full_name">Name</label>
-          <input class="required" type="text" name="full_name" value="" id="full_name" />
-        </div>
-        <div class="text">
-          <label for="email">Email</label>
-          <input class="required email" type="text" name="email" value="" id="email" />
-        </div>
-        <div class="text">
-          <label for="password">Password</label>
-          <input class="required" type="password" name="password" value="" id="password" />
-        </div>
-        <div class="text">
-          <label for="password_confirm">Confirm Password</label>
-          <input class="required equals" type="password" name="password" value="" id="password_confirm" />
-        </div>
 
-        <div class="textarea">
-          <label for="comment">Comment</label>
-          <textarea name="comment" rows="8" cols="20"></textarea>
-        </div>
-      </fieldset>
-      <div class="actions">
-        <input type="submit" name="send_comment" value="send" id="send_comment" />
-      </div>
-    </form>
-    <h3>File Upload Form</h3>
-    <form id="bar" action="">
-      <fieldset>
-        <h3 class="legend">Add New Project</h3>
-        <div class="text">
-          <label for="proj-name">New Project Name</label>
-          <input class="required" type="text" id="proj-name" />
-        </div>
-        <input name="submitbar" class="submit" type="submit" value="Create" />
-      </fieldset>
-    </form>
 
   </div>
+  <script src="http://code.jquery.com/jquery-1.11.2.js"></script>
+  <script src="qunit/qunit.js"></script>
+  <script src="../jquery.tinyvalidate.js"></script>
+  <script src="../jquery.tinyvalidate.rules.js"></script>
+  <script src="tests.js"></script>
+
 </body>
 
 </html>

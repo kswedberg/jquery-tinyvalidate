@@ -45,6 +45,9 @@ $.fn.tinyvalidate.defaults = {
 ```js
 $.fn.tinyvalidate.defaults.inline = {
   insertType: 'after',
+  // If no insertTo specified, inserts relative to the inline element.
+  // Can be a selector or a function returning an element or jQuery object.
+  insertTo: null,
   errorElement: '<div class="error-message"></div>',
   errorAnimate: {
     effect: 'fadeIn',

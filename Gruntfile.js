@@ -69,7 +69,7 @@ module.exports = function(grunt) {
       }
     },
     qunit: {
-      files: ['test/**/*.html']
+      all: ['test/**/*.html']
     },
     watch: {
       gruntfile: {
@@ -90,6 +90,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
 
+  grunt.registerTask('build', ['jshint', 'concat']);
   // Default task.
   grunt.registerTask('default', ['jshint', 'qunit', 'concat']);
 

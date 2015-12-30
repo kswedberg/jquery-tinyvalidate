@@ -1,25 +1,47 @@
-/* globals test: false, equal: false  */
-module('defaults', {
-  setup: function() {
-    this.frm = $('form').eq(0);
-    this.frm.tinyvalidate();
+/* globals QUnit: false */
+$('form.full').first().tinyvalidate();
+QUnit.module('defaults', {
+  beforeEach: function() {
+
+    this.frm = $('form.full').first();
+
+    this.errorSelector = '.error';
+  },
+  afterEach: function() {
+    // $('form.full').first().tinyvalidate('removeErrors');
   }
 });
 
-test('submit', function() {
-  equal(this.frm.find('.error').length, 0, 'Start with no errors');
+QUnit.test('submits', function(assert) {
+  assert.expect(2);
+  assert.equal(this.frm.find(this.errorSelector).length, 0, '0 errors before submit');
   this.frm.triggerHandler('submit');
-  equal(this.frm.find('.error').length, 3, '3 errors after submit');
+
+  assert.equal(this.frm.find(this.errorSelector).length, 3, '3 errors after submit');
 });
 
-test('blur', function() {
-  this.frm.find(':input').trigger('blur');
-  equal(this.frm.find('.error').length, 3, '3 errors after blurring all');
+QUnit.test('again', function(assert) {
+  assert.expect(2);
+  assert.equal(this.frm.find(this.errorSelector).length, 0, '0 errors before submit');
+  this.frm.triggerHandler('submit');
+
+  assert.equal(this.frm.find(this.errorSelector).length, 3, '3 errors after submit');
 });
 
-test('removeErrors', function() {
+QUnit.test('blurs', function(assert) {
+  assert.equal(this.frm.find(this.errorSelector).length, 0, '0 errors before blurs');
+  this.frm.find('input').trigger('blur');
+  this.frm.find('input[type="radio"]').trigger('change');
+  assert.equal(this.frm.find(this.errorSelector).length, 3, '3 errors after blurring all');
+});
+
+QUnit.test('removeErrors', function(assert) {
+  assert.expect(3);
+  assert.equal(this.frm.find(this.errorSelector).length, 0, '0 errors before submit');
+
   this.frm.triggerHandler('submit');
-  equal(this.frm.find('.error').length, 3, '3 errors after submit');
+
+  assert.equal(this.frm.find(this.errorSelector).length, 3, '3 errors after submit');
   this.frm.tinyvalidate('removeErrors');
-  equal(this.frm.find('.error').length, 0, '0 errors after tinyvalidate("removeErrors")');
+  assert.equal(this.frm.find(this.errorSelector).length, 0, '0 errors after tinyvalidate("removeErrors")');
 });
