@@ -7,7 +7,7 @@
   });
 
   $.tinyvalidate = {
-    version: '1.13.0',
+    version: '1.13.1',
     callCounter: -1,
     maxnum: 0,
     rules: {}
@@ -21,7 +21,10 @@
     var fields = [];
 
     $.each(rules, function(ruleName, ruleInfo) {
-      $container.find('.' + ruleInfo.ruleClass).each(function() {
+      $container.find('.' + ruleInfo.ruleClass).not(function() {
+        return this.nodeName === 'DIV' && !!$(this).find('.' + ruleInfo.ruleClass).length;
+      })
+      .each(function() {
         fields.push(this);
       });
     });
@@ -129,6 +132,7 @@
               text: 'Field value is invalid.'
             });
           }
+
           // skip the rule if it's on a div that wraps an input with same class
           if (this.nodeName === 'DIV' && $field.has(ruleSelector).length) {
             return;
