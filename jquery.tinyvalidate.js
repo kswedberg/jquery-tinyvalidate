@@ -1,6 +1,6 @@
-/*! jQuery Tiny Validate Plugin - v1.12.0 - 2015-12-30
-*
-* Copyright (c) 2015 Karl Swedberg; Licensed MIT
+/*! jQuery Tiny Validate Plugin - v1.13.0 - 2016-01-11
+* 
+* Copyright (c) 2016 Karl Swedberg; Licensed MIT
  */
 (function($) {
   'use strict';
@@ -10,7 +10,7 @@
   });
 
   $.tinyvalidate = {
-    version: '1.12.0',
+    version: '1.13.0',
     callCounter: -1,
     maxnum: 0,
     rules: {}
@@ -19,11 +19,33 @@
   ins.inputs = {};
   ins.containers = {};
 
+  $.fn.tinyfields = function(rules) {
+    var $container = this;
+    var fields = [];
+
+    $.each(rules, function(ruleName, ruleInfo) {
+      $container.find('.' + ruleInfo.ruleClass).each(function() {
+        fields.push(this);
+      });
+    });
+
+    return $([]).pushStack(fields);
+  };
+
   $.fn.tinyvalidate = function(options) {
     $.tinyvalidate.callCounter++;
     var idSuffix = $.tinyvalidate.callCounter ? '_' + $.tinyvalidate.callCounter : '';
     var rules = $.tinyvalidate.rules;
     var requiredClass = rules.required && rules.required.ruleClass || 'required';
+
+    var removeErrors = function removeErrors($form, $allFields) {
+
+      $allFields
+      .removeData('error')
+      .trigger('removeNotice')
+      .trigger('toggleErrorClass');
+      $form.trigger('hideSummary');
+    };
 
     if (isEmpty(rules)) {
       return log('you must have at least one rule. see jquery.tinyvalidate.rules.js', 'alert');
@@ -34,7 +56,7 @@
 
     return this.each(function(index) {
       var $form = $(this);
-      var $allFields = $([]);
+      var $allFields = $form.tinyfields(rules);
 
       // merge defaults, per-call options, and per-selector (form) options
       var opts = $.extend(true, {}, $.fn.tinyvalidate.defaults, options || {}, $.metadata ? $form.metadata() : $.meta ? $form.data() : {});
@@ -48,19 +70,29 @@
               opts.otherEvents || [];
 
       idSuffix += (index ? '-' + index : '');
+
       // special case: $('someform').tinyvalidate('removeErrors')
       // immediately removes all error class and notices from the form
       if (options === 'removeErrors') {
-        $.each(rules, function(ruleName, ruleInfo) {
-          $form.find('.' + ruleInfo.ruleClass).each(function() {
-            $allFields = $allFields.add($(this));
-          });
-        });
+        removeErrors($form, $allFields);
+
+        return this;
+      }
+
+      // special case: $('someform').tinyvalidate('destroy')
+      // unbinds all event handlers and removes data from form and fields
+      if (options === 'destroy') {
+        removeErrors($form, $allFields);
+        $form.unbind('.tv');
         $allFields
-        .removeData('error')
-        .trigger('removeNotice')
-        .trigger('toggleErrorClass');
-        $form.trigger('hideSummary');
+        .unbind('.tv')
+        .removeData(['rule', 'ruleName', 'elementType', 'insertion']);
+
+        if (opts.summary) {
+          $errorSummary.remove();
+        }
+
+        $errorSummary = $allFields = $form = null;
 
         return this;
       }
@@ -111,7 +143,6 @@
           .data('rule', thisRule)
           .data('ruleName', ruleName)
           .data('elementType', elType);
-          $allFields = $allFields.add($field);
 
           if (inline) {
             // If we're designating the insertion element, we should know what we're doing, so treat it as a container
@@ -129,7 +160,7 @@
         if (inline.errorElement) {
 
           $allFields
-          .bind('addNotice', function(event, num) {
+          .bind('addNotice.tv', function(event, num) {
             var insertTo = this;
             var $thisField = $(this);
             var ruleText = $.isFunction($thisField.data('rule')[num].text) ?
@@ -148,14 +179,14 @@
             .hide();
             $thisNotice[inline.errorAnimate.effect](inline.errorAnimate.speed);
 
-            $thisField.bind('removeNotice', function() {
+            $thisField.bind('removeNotice.tv', function() {
               $thisNotice.remove();
             });
           });
         }
 
         $allFields
-        .bind('toggleErrorClass', function() {
+        .bind('toggleErrorClass.tv', function() {
           var $thisContainer, $selectContainer;
           var $thisField = $(this);
 
@@ -176,26 +207,28 @@
       }
 
       if (summary) {
-        $form.bind('displaySummary', function(event, errors) {
+        $form.bind('displaySummary.tv', function(event, errors) {
           $errorSummary.hide();
 
           if (errors) {
             var preMessage = summary.preMessage.replace(/\{num\}/g, errors);
             preMessage = pluralize(preMessage, errors);
             var fullSummary = summary.lineItems ?
-                 preMessage +  itemWrapperSplitTag[0] + summaryItems.join(lineItemDivider) + itemWrapperSplitTag[1] + summary.postMessage :
-                preMessage + summary.postMessage;
+              preMessage +  itemWrapperSplitTag[0] + summaryItems.join(lineItemDivider) + itemWrapperSplitTag[1] + summary.postMessage :
+              preMessage + summary.postMessage;
+
             $errorSummary.html(fullSummary)
             [summary.messageAnimate.effect](summary.messageAnimate.speed);
           }
         });
-        $form.bind('hideSummary', function() {
-          $errorSummary.hide();
+
+        $form.bind('hideSummary.tv', function() {
+          $errorSummary.empty().hide();
         });
 
         if (summary.lineItems) {
 
-          $form.bind('lineItemBuilder', function(event, field, therule) {
+          $form.bind('lineItemBuilder.tv', function(event, field, therule) {
             var $field = $(field);
             var $fieldLabel = $('<div></div>').html(
               $field.data('elementType') === 'containers' ?

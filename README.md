@@ -88,4 +88,22 @@ $.fn.tinyvalidate.defaults.summary = {
 };
 ```
 
+## Methods
+
+### removeErrors
+
+Immediately remove all error classes and messages from the form.
+
+```js
+$(yourForm).tinyvalidate('removeErrors');
+```
+
+### destroy
+
+Remove tinyvalidate from the form. Unbinds all tinyvalidate events and data from the form and its fields.
+
+```js
+$(yourForm).tinyvalidate('destroy');
+```
+
 [MIT license]: http://www.opensource.org/licenses/mit-license.php

@@ -1,6 +1,6 @@
-/*! jQuery Tiny Validate Plugin - v1.12.0 - 2015-12-30
+/*! jQuery Tiny Validate Plugin - v1.13.0 - 2016-01-11
 * 
-* Copyright (c) 2015 Karl Swedberg; Licensed MIT
+* Copyright (c) 2016 Karl Swedberg; Licensed MIT
  */
 (function($) {
 
@@ -59,7 +59,6 @@
     check: 'value'
   };
 
-
   $.tinyvalidate.rules.ssn = {
     ruleClass: 'ssn',
     rule: function(r) {
@@ -93,11 +92,12 @@
     ruleClass: 'max',
     rule: function(el) {
       // this rule requires 2 classes, "max" and "max-n", where n represents the max number
-      $.tinyvalidate.maxnum = el[0].className.replace(/.*max-(\d+).*/,'$1');
+      $.tinyvalidate.maxnum = el[0].className.replace(/.*max-(\d+).*/, '$1');
+
       return (el.find('input:checked').length <= +$.tinyvalidate.maxnum);
     },
     text: function() {
-      return 'No more than ' + this.className.replace(/.*max-(\d+).*/,'$1') + ' options may be selected';
+      return 'No more than ' + this.className.replace(/.*max-(\d+).*/, '$1') + ' options may be selected';
     },
     check: 'element'
   };
@@ -111,10 +111,12 @@
 
         if (index && this.value !== previousValue) {
           previousValue = false;
+
           return false;
         }
         previousValue = this.value;
       });
+
       return !previousValue ? false : true;
     },
     text: 'Values must match',
