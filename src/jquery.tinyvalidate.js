@@ -7,7 +7,7 @@
   });
 
   $.tinyvalidate = {
-    version: '1.13.1',
+    version: '1.13.2',
     callCounter: -1,
     maxnum: 0,
     rules: {}

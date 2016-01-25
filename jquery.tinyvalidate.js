@@ -1,4 +1,4 @@
-/*! jQuery Tiny Validate Plugin - v1.13.1 - 2016-01-11
+/*! jQuery Tiny Validate Plugin - v1.13.2 - 2016-01-25
 * 
 * Copyright (c) 2016 Karl Swedberg; Licensed MIT
  */
@@ -10,7 +10,7 @@
   });
 
   $.tinyvalidate = {
-    version: '1.13.1',
+    version: '1.13.2',
     callCounter: -1,
     maxnum: 0,
     rules: {}
@@ -23,6 +23,10 @@
     var $container = this;
     var fields = [];
 
+    if (!rules) {
+      return $([]).pushStack(fields);
+    }
+
     $.each(rules, function(ruleName, ruleInfo) {
       $container.find('.' + ruleInfo.ruleClass).not(function() {
         return this.nodeName === 'DIV' && !!$(this).find('.' + ruleInfo.ruleClass).length;
@@ -31,6 +35,8 @@
         fields.push(this);
       });
     });
+
+    fields = $.unique(fields);
 
     return $([]).pushStack(fields);
   };
