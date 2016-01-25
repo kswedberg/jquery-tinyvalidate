@@ -20,6 +20,10 @@
     var $container = this;
     var fields = [];
 
+    if (!rules) {
+      return $([]).pushStack(fields);
+    }
+
     $.each(rules, function(ruleName, ruleInfo) {
       $container.find('.' + ruleInfo.ruleClass).not(function() {
         return this.nodeName === 'DIV' && !!$(this).find('.' + ruleInfo.ruleClass).length;
