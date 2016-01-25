@@ -29,6 +29,8 @@
       });
     });
 
+    fields = $.unique(fields);
+
     return $([]).pushStack(fields);
   };
 
