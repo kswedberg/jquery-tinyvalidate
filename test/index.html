@@ -1,94 +1,90 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Tests</title>
-  <link rel="stylesheet" href="qunit/qunit.css" type="text/css" media="screen">
-  <style>
-  /*#qunit-fixture {
+  <head>
+    <title>Tests</title>
+    <link rel="stylesheet" href="qunit/qunit.css" type="text/css" media="screen" />
+    <style>
+      /*#qunit-fixture {
     left: 0;
     top: 50px;
     position: relative;
   }*/
-
-  </style>
-</head>
-<body>
-  <h1 id="qunit-header">Tests</h1>
-  <h2 id="qunit-banner"></h2>
-  <div id="qunit-testrunner-toolbar"></div>
-  <h2 id="qunit-userAgent"></h2>
-  <ol id="qunit-tests"></ol>
-  <div id="qunit-fixture">
-    <form class="full" action="" method="post">
-      <fieldset>
-      <legend>Project Information</legend>
-        <div class="text">
-          <label for="project-name">Project Name: *</label>
-          <input type="text" class="required" id="project-name" />
-        </div>
-        <div class="text">
-          <label for="project-bud">Budget:</label>
-          <input class="currency" size="8" type="text" id="project-bud" />
-          <span class="unit">US Dollars</span>
-        </div>
-        <div class="text">
-          <label for="project-zip">Zip Code: *</label>
-          <input class="required zip" type="text" id="project-zip" />
-        </div>
-        <div class="dropdown">
-          <label for="project-type">Project Type:</label>
-          <select id="project-type" name="project-type">
-            <option value="good">good</option>
-            <option value="bad">bad</option>
-            <option value="ugly">ugly</option>
-          </select>
-        </div>
-        <fieldset class="radio choose-one">
-          <legend>Size of Project: *</legend>
-          <div>
-            <input type="radio" name="size" id="twenty" value="1" />
-            <label for="twenty">20 People</label>
+    </style>
+  </head>
+  <body>
+    <h1 id="qunit-header">Tests</h1>
+    <h2 id="qunit-banner"></h2>
+    <div id="qunit-testrunner-toolbar"></div>
+    <h2 id="qunit-userAgent"></h2>
+    <ol id="qunit-tests"></ol>
+    <div id="qunit-fixture">
+      <form class="full" action="" method="post">
+        <fieldset>
+          <legend>Project Information</legend>
+          <div class="text">
+            <label for="project-name">Project Name: *</label>
+            <input type="text" class="required" id="project-name" />
           </div>
-          <div>
-            <input type="radio" name="size" id="more" value="2" />
-            <label for="more">More than 20 People</label>
+          <div class="text">
+            <label for="project-bud">Budget:</label>
+            <input class="currency" size="8" type="text" id="project-bud" />
+            <span class="unit">US Dollars</span>
+          </div>
+          <div class="text">
+            <label for="project-zip">Zip Code: *</label>
+            <input class="required zip" type="text" id="project-zip" />
+          </div>
+          <div class="dropdown">
+            <label for="project-type">Project Type:</label>
+            <select id="project-type" name="project-type">
+              <option value="good">good</option>
+              <option value="bad">bad</option>
+              <option value="ugly">ugly</option>
+            </select>
+          </div>
+          <fieldset class="radio choose-one">
+            <legend>Size of Project: *</legend>
+            <div>
+              <input type="radio" name="size" id="twenty" value="1" />
+              <label for="twenty">20 People</label>
+            </div>
+            <div>
+              <input type="radio" name="size" id="more" value="2" />
+              <label for="more">More than 20 People</label>
+            </div>
+          </fieldset>
+          <div class="textarea">
+            <label for="project-desc">Project Description</label>
+            <textarea rows="4" cols="50" id="project-desc"></textarea>
           </div>
         </fieldset>
-        <div class="textarea">
-          <label for="project-desc">Project Description</label>
-          <textarea rows="4" cols="50" id="project-desc"></textarea>
-        </div>
-      </fieldset>
-      <fieldset class="max max-2">
-        <legend>I am a... </legend>
-        <div>(choose no more than two)</div>
-        <div class="checkbox">
-          <input type="checkbox" name="i-am" id="driver" value="1" />
-          <label for="driver">Licensed Driver</label>
-        </div>
-        <div class="checkbox">
-          <input type="checkbox" name="i-am" id="timebomb" value="2" />
-          <label for="timebomb">Walking Timebomb</label>
-        </div>
-        <div class="checkbox">
-          <input type="checkbox" name="i-am" id="fiscal" value="3" />
-          <label for="fiscal">Fiscal Nightmare</label>
-        </div>
-      </fieldset>
-      <fieldset class="actions">
-          <input name="submitfoo" class="submit" type="submit" value="Submit Form" />
+        <fieldset class="max max-2">
+          <legend>I am a...</legend>
+          <div>(choose no more than two)</div>
+          <div class="checkbox">
+            <input type="checkbox" name="i-am" id="driver" value="1" />
+            <label for="driver">Licensed Driver</label>
+          </div>
+          <div class="checkbox">
+            <input type="checkbox" name="i-am" id="timebomb" value="2" />
+            <label for="timebomb">Walking Timebomb</label>
+          </div>
+          <div class="checkbox">
+            <input type="checkbox" name="i-am" id="fiscal" value="3" />
+            <label for="fiscal">Fiscal Nightmare</label>
+          </div>
+        </fieldset>
+        <fieldset class="actions">
+          <button name="submitfoo" class="submit" type="submit">Submit Form</button>
+
           <a class="cancel" href="#">Cancel</a>
-      </fieldset>
-    </form>
-
-
-  </div>
-  <script src="http://code.jquery.com/jquery-1.11.2.js"></script>
-  <script src="qunit/qunit.js"></script>
-  <script src="../src/jquery.tinyvalidate.js"></script>
-  <script src="../src/jquery.tinyvalidate.rules.js"></script>
-  <script src="tests.js"></script>
-
-</body>
-
+        </fieldset>
+      </form>
+    </div>
+    <script src="https://code.jquery.com/jquery-1.11.2.js"></script>
+    <script src="qunit/qunit.js"></script>
+    <script src="../src/jquery.tinyvalidate.js"></script>
+    <script src="../src/jquery.tinyvalidate.rules.js"></script>
+    <script src="tests.js"></script>
+  </body>
 </html>
