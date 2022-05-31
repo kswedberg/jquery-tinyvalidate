@@ -78,7 +78,7 @@ module.exports = function(grunt) {
       },
       srcTest: {
         files: '<%= jshint.srcTest.src %>',
-        tasks: ['jshint:srcTest', 'qunit']
+        tasks: ['qunit']
       }
     }
   });
@@ -90,8 +90,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
 
-  grunt.registerTask('build', ['jshint', 'concat']);
+  grunt.registerTask('build', ['concat']);
   // Default task.
-  grunt.registerTask('default', ['jshint', 'qunit', 'concat']);
+  grunt.registerTask('default', ['qunit', 'concat']);
 
 };
