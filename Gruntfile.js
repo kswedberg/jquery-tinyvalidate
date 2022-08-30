@@ -91,6 +91,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
 
   grunt.registerTask('build', ['concat']);
+  grunt.registerTask('test', ['qunit']);
   // Default task.
   grunt.registerTask('default', ['qunit', 'concat']);
 
