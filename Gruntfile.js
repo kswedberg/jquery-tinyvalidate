@@ -1,5 +1,6 @@
 /*global module:false*/
 module.exports = function(grunt) {
+  const name = 'jquery.tinyvalidate';
 
   // Project configuration.
   grunt.initConfig({
@@ -19,16 +20,16 @@ module.exports = function(grunt) {
         stripBanners: true
       },
       all: {
-        src: ['src/<%= pkg.name %>.js', 'src/<%= pkg.name %>.rules.js'],
-        dest: '<%= pkg.name %>.all.js'
+        src: ['src/' + name + '.js', 'src/' + name + '.rules.js'],
+        dest: name + '.all.js'
       },
       main: {
-        src: ['src/<%= pkg.name %>.js'],
-        dest: '<%= pkg.name %>.js'
+        src: ['src/' + name + '.js'],
+        dest: name + '.js'
       },
       rules: {
-        src: ['src/<%= pkg.name %>.rules.js'],
-        dest: '<%= pkg.name %>.rules.js'
+        src: ['src/' + name + '.rules.js'],
+        dest: name + '.rules.js'
       }
     },
     uglify: {
@@ -37,7 +38,7 @@ module.exports = function(grunt) {
       },
       all: {
         src: '<%= concat.all.dest %>',
-        dest: '<%= pkg.name %>.all.min.js'
+        dest: '' + name + '.all.min.js'
       }
     },
     jshint: {
