@@ -1,6 +1,4 @@
 // @ts-nocheck
-/* globals QUnit: false */
-
 // @ts-ignore
 QUnit.module('defaults', {
   beforeEach: function() {
