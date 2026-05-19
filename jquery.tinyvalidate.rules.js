@@ -1,6 +1,6 @@
-/*! jQuery Tiny Validate Plugin - v1.13.2 - 2016-01-25
+/*! jQuery Tiny Validate Plugin - v1.13.2 - 2026-05-19
 * 
-* Copyright (c) 2016 Karl Swedberg; Licensed MIT
+* Copyright (c) 2026 Karl Swedberg; Licensed MIT
  */
 (function($) {
 
@@ -53,7 +53,7 @@
   $.tinyvalidate.rules.phone = {
     ruleClass: 'phone',
     rule: function(r) {
-      return (/\(?\d{3}\)?[\. -]?\d{3}[\. -]?\d{4}/).test(r) || r === '';
+      return (/\(?\d{3}\)?[. -]?\d{3}[. -]?\d{4}/).test(r) || r === '';
     },
     text: 'Invalid Format ',
     check: 'value'
@@ -94,7 +94,7 @@
       // this rule requires 2 classes, "max" and "max-n", where n represents the max number
       $.tinyvalidate.maxnum = el[0].className.replace(/.*max-(\d+).*/, '$1');
 
-      return (el.find('input:checked').length <= +$.tinyvalidate.maxnum);
+      return el.find('input:checked').length <= +$.tinyvalidate.maxnum;
     },
     text: function() {
       return 'No more than ' + this.className.replace(/.*max-(\d+).*/, '$1') + ' options may be selected';
@@ -106,6 +106,7 @@
     ruleClass: 'equals',
     rule: function(el) {
       var previousValue = '';
+
       $(el).closest('form').find('[name="' + el[0].name + '"]')
       .each(function(index) {
 
@@ -117,7 +118,7 @@
         previousValue = this.value;
       });
 
-      return !previousValue ? false : true;
+      return !!previousValue;
     },
     text: 'Values must match',
     check: 'element'

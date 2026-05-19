@@ -1,12 +1,13 @@
-/*! jQuery Tiny Validate Plugin - v1.13.2 - 2016-01-25
+/*! jQuery Tiny Validate Plugin - v1.13.2 - 2026-05-19
 * 
-* Copyright (c) 2016 Karl Swedberg; Licensed MIT
+* Copyright (c) 2026 Karl Swedberg; Licensed MIT
  */
 (function($) {
   'use strict';
   var inp = document.createElement('input');
+
   $.each(['required', 'pattern'], function(index, attr) {
-    $.support[attr] = (attr in inp);
+    $.support[attr] = attr in inp;
   });
 
   $.tinyvalidate = {
@@ -16,6 +17,7 @@
     rules: {}
   };
   var ins = {};
+
   ins.inputs = {};
   ins.containers = {};
 
@@ -68,17 +70,18 @@
       var $allFields = $form.tinyfields(rules);
 
       // merge defaults, per-call options, and per-selector (form) options
+      // eslint-disable-next-line no-nested-ternary
       var opts = $.extend(true, {}, $.fn.tinyvalidate.defaults, options || {}, $.metadata ? $form.metadata() : $.meta ? $form.data() : {});
       var summaryItems = [];
       var errorCount = 0;
       var summary = opts.summary;
       var $errorSummary = summary && $(summary.wrapper).hide();
       var inline = opts.inline;
-      var evts = (typeof opts.otherEvents === 'string') ?
-              opts.otherEvents.split(/\s*,\s*/) :
-              opts.otherEvents || [];
+      var evts = typeof opts.otherEvents === 'string' ?
+        opts.otherEvents.split(/\s*,\s*/) :
+        opts.otherEvents || [];
 
-      idSuffix += (index ? '-' + index : '');
+      idSuffix += index ? '-' + index : '';
 
       // special case: $('someform').tinyvalidate('removeErrors')
       // immediately removes all error class and notices from the form
@@ -117,13 +120,14 @@
         if (summary.lineItems) {
           var itemWrapperSplitTag = splitTag(summary.lineItems.wrapper);
           var lineItemDivider = itemWrapperSplitTag[1] + itemWrapperSplitTag[0];
-          var itemErrorSplitTag = summary.lineItems.errorElement ? splitTag(summary.lineItems.errorElement) : ['',''];
+          var itemErrorSplitTag = summary.lineItems.errorElement ? splitTag(summary.lineItems.errorElement) : ['', ''];
         }
       }
 
       // initialize: loop through elements with class that matches each rule's class
       $.each(rules, function(ruleName, ruleInfo) {
         var ruleSelector = '.' + ruleInfo.ruleClass;
+
         $form.find(ruleSelector).each(function() {
           var elType = setElementType(this.nodeName) || 'inputs';
           var $field = $(this);
@@ -205,10 +209,10 @@
           if ($selectContainer && $selectContainer.length) {
             $thisContainer = $selectContainer;
           } else {
-            $thisContainer = ($thisField.find('input[type="checkbox"], input[type="radio"]').length) ? $thisField : $thisField.closest(inline.containerTag);
+            $thisContainer = $thisField.find('input[type="checkbox"], input[type="radio"]').length ? $thisField : $thisField.closest(inline.containerTag);
           }
 
-          if (!!$thisField.data('error')) {
+          if ($thisField.data('error')) {
             $thisContainer.addClass(inline.containerErrorClass);
           } else {
             $thisContainer.removeClass(inline.containerErrorClass);
@@ -222,9 +226,10 @@
 
           if (errors) {
             var preMessage = summary.preMessage.replace(/\{num\}/g, errors);
+
             preMessage = pluralize(preMessage, errors);
             var fullSummary = summary.lineItems ?
-              preMessage +  itemWrapperSplitTag[0] + summaryItems.join(lineItemDivider) + itemWrapperSplitTag[1] + summary.postMessage :
+              preMessage + itemWrapperSplitTag[0] + summaryItems.join(lineItemDivider) + itemWrapperSplitTag[1] + summary.postMessage :
               preMessage + summary.postMessage;
 
             $errorSummary.html(fullSummary)
@@ -245,8 +250,9 @@
                 $field.children().eq(0).html() :
                 $field.prev().clone().html()
             );
+
             $fieldLabel.children().remove();
-            var fieldLabel = $fieldLabel.text().replace(/[\*:\s]+$/, '');
+            var fieldLabel = $fieldLabel.text().replace(/[*:\s]+$/, '');
             var ruleText = $.isFunction(therule.text) ? therule.text.call(this) : therule.text;
 
             if (summary.lineItems.linkify) {
@@ -294,6 +300,7 @@
 
       $form.bind('submit.tv', function() {
         var ret;
+
         errorCount = 0;
         summaryItems = [];
         $allFields.trigger('validate.tv');
@@ -361,7 +368,7 @@
     // Called after tinyvalidate's error handling
     // `this` is the form element
     // Takes one argument: errorCount (the number of errors found)
-    submitError: function() {},
+    submitError: function() {/* do something */},
 
     // If you want to override submit when no validation errors,
     // use a function reference or an anonymous function:
@@ -411,9 +418,10 @@
   /** PRIVATE safeguards for inline insertion in case plugin user chooses wrong insertion type
       feel free to ignore this part.
   ************************************************************/
-  var insertionMap = { after: 'insertAfter', insertAfter: 'insertAfter', before: 'insertBefore', insertBefore: 'insertBefore' };
-  $.extend(ins.inputs, insertionMap, { append: 'insertAfter', appendTo: 'insertAfter', prepend: 'insertBefore', prependTo: 'insertBefore' });
-  $.extend(ins.containers, insertionMap, { append: 'appendTo', appendTo: 'appendTo', prepend: 'prependTo', prependTo: 'prependTo' });
+  var insertionMap = {after: 'insertAfter', insertAfter: 'insertAfter', before: 'insertBefore', insertBefore: 'insertBefore'};
+
+  $.extend(ins.inputs, insertionMap, {append: 'insertAfter', appendTo: 'insertAfter', prepend: 'insertBefore', prependTo: 'insertBefore'});
+  $.extend(ins.containers, insertionMap, {append: 'appendTo', appendTo: 'appendTo', prepend: 'prependTo', prependTo: 'prependTo'});
 
   /* other private functions */
   function setElementType(tag) {
@@ -441,8 +449,8 @@
     }
   }
   function pluralize(word, number) {
-    return word.replace(/\{([^\|]+)\|([^}]+)\}/g, function(fullmatch, singular, plural) {
-      return (number * 1 === 1) ? singular : plural;
+    return word.replace(/\{([^|]+)\|([^}]+)\}/g, function(fullmatch, singular, plural) {
+      return number * 1 === 1 ? singular : plural;
     });
   }
 })(jQuery);
@@ -498,7 +506,7 @@
   $.tinyvalidate.rules.phone = {
     ruleClass: 'phone',
     rule: function(r) {
-      return (/\(?\d{3}\)?[\. -]?\d{3}[\. -]?\d{4}/).test(r) || r === '';
+      return (/\(?\d{3}\)?[. -]?\d{3}[. -]?\d{4}/).test(r) || r === '';
     },
     text: 'Invalid Format ',
     check: 'value'
@@ -539,7 +547,7 @@
       // this rule requires 2 classes, "max" and "max-n", where n represents the max number
       $.tinyvalidate.maxnum = el[0].className.replace(/.*max-(\d+).*/, '$1');
 
-      return (el.find('input:checked').length <= +$.tinyvalidate.maxnum);
+      return el.find('input:checked').length <= +$.tinyvalidate.maxnum;
     },
     text: function() {
       return 'No more than ' + this.className.replace(/.*max-(\d+).*/, '$1') + ' options may be selected';
@@ -551,6 +559,7 @@
     ruleClass: 'equals',
     rule: function(el) {
       var previousValue = '';
+
       $(el).closest('form').find('[name="' + el[0].name + '"]')
       .each(function(index) {
 
@@ -562,7 +571,7 @@
         previousValue = this.value;
       });
 
-      return !previousValue ? false : true;
+      return !!previousValue;
     },
     text: 'Values must match',
     check: 'element'
