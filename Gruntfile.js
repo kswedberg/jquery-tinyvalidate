@@ -1,6 +1,8 @@
-/*global module:false*/
+/* global module:false*/
 module.exports = function(grunt) {
   const name = 'jquery.tinyvalidate';
+
+  const lintedFiles = ['src/**/*.js', 'test/*.js', 'Gruntfile.js'];
 
   // Project configuration.
   grunt.initConfig({
@@ -41,45 +43,17 @@ module.exports = function(grunt) {
         dest: '' + name + '.all.min.js'
       }
     },
-    jshint: {
-      options: {
-        curly: true,
-        devel: true,
-        eqeqeq: true,
-        immed: true,
-        latedef: true,
-        newcap: true,
-        noarg: true,
-        node: true,
-        sub: true,
-        undef: true,
-        unused: true,
-        boss: true,
-        eqnull: true,
-        browser: true,
-        globals: {
-          jQuery: true,
-          $: true
-        }
-      },
-      gruntfile: {
-        src: 'Gruntfile.js'
-      },
-      srcTest: {
-        src: ['src/**/*.js', 'test/*.js']
-      }
+    eslint: {
+      target: lintedFiles
     },
     qunit: {
       all: ['test/**/*.html']
     },
     watch: {
-      gruntfile: {
-        files: '<%= jshint.gruntfile.src %>',
-        tasks: ['jshint:gruntfile']
-      },
-      srcTest: {
-        files: '<%= jshint.srcTest.src %>',
-        tasks: ['qunit']
+
+      scripts: {
+        files: lintedFiles,
+        tasks: ['qunit', 'eslint']
       }
     }
   });
@@ -88,7 +62,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-qunit');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-eslint');
   grunt.loadNpmTasks('grunt-contrib-watch');
 
   grunt.registerTask('build', ['concat']);
