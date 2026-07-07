@@ -14,7 +14,7 @@ export default [
     }
   },
   {
-    files: ['src/**/*.js', 'test/*.js', 'Gruntfile.js'],
+    files: ['*.js', 'src/**/*.js', 'test/*.js', 'Gruntfile.js'],
 
     rules: {
       'comma-dangle': ['warn', 'never'],

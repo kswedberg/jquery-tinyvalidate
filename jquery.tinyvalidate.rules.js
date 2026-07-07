@@ -1,6 +1,6 @@
-/*! jQuery Tiny Validate Plugin - v1.13.2 - 2026-05-19
-* 
-* Copyright (c) 2026 Karl Swedberg; Licensed MIT
+/*! jQuery Tiny Validate Plugin - v1.13.2 - 2026-07-07
+ * A (relatively) tiny validation plugin
+ * Copyright (c) 2026 Karl Swedberg; Licensed MIT
  */
 (function($) {
 
