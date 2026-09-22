@@ -31,7 +31,7 @@
     "grunt-contrib-qunit": "^10.2.0",
     "grunt-contrib-uglify": "^5.2.2",
     "grunt-contrib-watch": "^1.1.0",
-    "grunt-eslint": "^26.0.0",
+    "grunt-eslint": "^27.0.0",
     "qunit": "^2.26.0"
   },
   "resolutions": {
